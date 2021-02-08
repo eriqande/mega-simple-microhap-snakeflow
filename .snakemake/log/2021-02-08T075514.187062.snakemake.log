@@ -1,0 +1,4 @@
+Building DAG of jobs...
+WildcardError in line 112 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile:
+Wildcards in input files cannot be determined from output files:
+'sample'

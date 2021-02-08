@@ -1,0 +1,57 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	4	coverage_full
+	4
+Select jobs to execute...
+
+[Mon Feb  8 08:06:20 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR2.bam
+    output: coverage/samples/CHLFAR2_cov_full.tsv
+    jobid: 10
+    wildcards: sample=CHLFAR2
+
+[Mon Feb  8 08:06:20 2021]
+Finished job 10.
+1 of 4 steps (25%) done
+Select jobs to execute...
+
+[Mon Feb  8 08:06:20 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR1.bam
+    output: coverage/samples/CHLFAR1_cov_full.tsv
+    jobid: 7
+    wildcards: sample=CHLFAR1
+
+[Mon Feb  8 08:06:20 2021]
+Finished job 7.
+2 of 4 steps (50%) done
+Select jobs to execute...
+
+[Mon Feb  8 08:06:20 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR4.bam
+    output: coverage/samples/CHLFAR4_cov_full.tsv
+    jobid: 13
+    wildcards: sample=CHLFAR4
+
+[Mon Feb  8 08:06:20 2021]
+Finished job 13.
+3 of 4 steps (75%) done
+Select jobs to execute...
+
+[Mon Feb  8 08:06:20 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR5.bam
+    output: coverage/samples/CHLFAR5_cov_full.tsv
+    jobid: 0
+    wildcards: sample=CHLFAR5
+
+[Mon Feb  8 08:06:20 2021]
+Finished job 0.
+4 of 4 steps (100%) done
+Complete log: /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/.snakemake/log/2021-02-08T080620.461266.snakemake.log

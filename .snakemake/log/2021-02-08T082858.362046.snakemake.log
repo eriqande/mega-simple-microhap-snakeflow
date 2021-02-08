@@ -1,0 +1,20 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	catenate_coverages
+	1
+Select jobs to execute...
+
+[Mon Feb  8 08:28:58 2021]
+rule catenate_coverages:
+    input: coverage/samples/CHLFAR1_cov_full.tsv, coverage/samples/CHLFAR1_cov_thin.tsv, coverage/samples/CHLFAR2_cov_full.tsv, coverage/samples/CHLFAR2_cov_thin.tsv, coverage/samples/CHLFAR3_cov_full.tsv, coverage/samples/CHLFAR3_cov_thin.tsv, coverage/samples/CHLFAR4_cov_full.tsv, coverage/samples/CHLFAR4_cov_thin.tsv, coverage/samples/CHLFAR5_cov_full.tsv, coverage/samples/CHLFAR5_cov_thin.tsv
+    output: coverage/all_coverages.tsv
+    jobid: 0
+
+[Mon Feb  8 08:28:58 2021]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/.snakemake/log/2021-02-08T082858.362046.snakemake.log

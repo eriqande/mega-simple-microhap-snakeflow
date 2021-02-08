@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+bedfiles
+benchmarks
+coverage
+dag.png
+data
+extracted_reads
+genome
+logs
+mapped_reads
+mapped_reads_thin
+thinned_genome

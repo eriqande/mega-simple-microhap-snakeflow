@@ -1,0 +1,65 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	5	coverage_thin
+	5
+Select jobs to execute...
+
+[Mon Feb  8 08:14:39 2021]
+rule coverage_thin:
+    input: bedfiles/regions_thin.bed, mapped_reads_thin/CHLFAR5.bam
+    output: coverage/samples/CHLFAR5_cov_thin.tsv
+    jobid: 0
+    wildcards: sample=CHLFAR5
+
+
+[Mon Feb  8 08:14:39 2021]
+rule coverage_thin:
+    input: bedfiles/regions_thin.bed, mapped_reads_thin/CHLFAR2.bam
+    output: coverage/samples/CHLFAR2_cov_thin.tsv
+    jobid: 6
+    wildcards: sample=CHLFAR2
+
+
+[Mon Feb  8 08:14:39 2021]
+rule coverage_thin:
+    input: bedfiles/regions_thin.bed, mapped_reads_thin/CHLFAR3.bam
+    output: coverage/samples/CHLFAR3_cov_thin.tsv
+    jobid: 8
+    wildcards: sample=CHLFAR3
+
+
+[Mon Feb  8 08:14:39 2021]
+rule coverage_thin:
+    input: bedfiles/regions_thin.bed, mapped_reads_thin/CHLFAR4.bam
+    output: coverage/samples/CHLFAR4_cov_thin.tsv
+    jobid: 10
+    wildcards: sample=CHLFAR4
+
+
+[Mon Feb  8 08:14:39 2021]
+rule coverage_thin:
+    input: bedfiles/regions_thin.bed, mapped_reads_thin/CHLFAR1.bam
+    output: coverage/samples/CHLFAR1_cov_thin.tsv
+    jobid: 5
+    wildcards: sample=CHLFAR1
+
+[Mon Feb  8 08:14:39 2021]
+Finished job 0.
+1 of 5 steps (20%) done
+[Mon Feb  8 08:14:39 2021]
+Finished job 6.
+2 of 5 steps (40%) done
+[Mon Feb  8 08:14:39 2021]
+Finished job 10.
+3 of 5 steps (60%) done
+[Mon Feb  8 08:14:39 2021]
+Finished job 5.
+4 of 5 steps (80%) done
+[Mon Feb  8 08:14:39 2021]
+Finished job 8.
+5 of 5 steps (100%) done
+Complete log: /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/.snakemake/log/2021-02-08T081439.399150.snakemake.log

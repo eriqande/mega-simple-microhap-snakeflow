@@ -1,0 +1,20 @@
+Building DAG of jobs...
+Job counts:
+	count	jobs
+	1	coverage_full
+	1
+
+[Mon Feb  8 08:01:44 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR3.bam
+    output: coverage/samples/CHLFAR3_cov_full.tsv
+    jobid: 0
+    wildcards: sample=CHLFAR3
+
+RuleException in line 112 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile:
+NameError: The name 'SM' is unknown in this context. Please make sure that you defined that variable. Also note that braces not used for variable access have to be escaped by repeating them, i.e. {{print $1}}
+  File "/Users/eriq/miniconda3/envs/snakemake-tutorial/lib/python3.7/site-packages/snakemake/executors/__init__.py", line 140, in run_jobs
+  File "/Users/eriq/miniconda3/envs/snakemake-tutorial/lib/python3.7/site-packages/snakemake/executors/__init__.py", line 145, in run
+  File "/Users/eriq/miniconda3/envs/snakemake-tutorial/lib/python3.7/site-packages/snakemake/executors/__init__.py", line 156, in _run
+  File "/Users/eriq/miniconda3/envs/snakemake-tutorial/lib/python3.7/site-packages/snakemake/executors/__init__.py", line 176, in printjob
+  File "/Users/eriq/miniconda3/envs/snakemake-tutorial/lib/python3.7/site-packages/snakemake/executors/__init__.py", line 162, in printjob

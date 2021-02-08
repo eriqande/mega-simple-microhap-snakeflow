@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	coverage_full
+	1
+Select jobs to execute...
+
+[Mon Feb  8 08:02:38 2021]
+rule coverage_full:
+    input: bedfiles/regions_full.bed, extracted_reads/CHLFAR3.bam
+    output: coverage/samples/CHLFAR3_cov_full.tsv
+    jobid: 0
+    wildcards: sample=CHLFAR3
+
+[Mon Feb  8 08:02:38 2021]
+Error in rule coverage_full:
+    jobid: 0
+    output: coverage/samples/CHLFAR3_cov_full.tsv
+    shell:
+        rm -f coverage/samples/CHLFAR3_cov_full.tsv; bedtools coverage -a bedfiles/regions_full.bed -b extracted_reads/CHLFAR3.bam | awk -v SM=CHLFAR3 '{printf("%s	%s
+", SM, $0);}' >> coverage/samples/CHLFAR3_cov_full.tsv
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job coverage_full since they might be corrupted:
+coverage/samples/CHLFAR3_cov_full.tsv
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/.snakemake/log/2021-02-08T080238.292599.snakemake.log
