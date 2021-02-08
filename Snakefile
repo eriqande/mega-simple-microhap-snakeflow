@@ -119,7 +119,7 @@ rule coverage_full:
     SM="{sample}"
   shell:
     "bedtools coverage -a {input.a} -b {input.b} | "
-    "awk -v SM={params.SM} '{{printf(\"full\t%s\t%s\\n\", SM, $0);}}' >> {output}"
+    "awk -v SM={params.SM} '{{printf(\"full\t%s\t%s\\n\", SM, $0);}}' > {output}"
 
 
 # compute the coverage at the target regions for each sample
@@ -134,7 +134,7 @@ rule coverage_thin:
     SM="{sample}"
   shell:
     "bedtools coverage -a {input.a} -b {input.b} | "
-    "awk -v SM={params.SM} '{{printf(\"thin\t%s\t%s\\n\", SM, $0);}}' >> {output}"
+    "awk -v SM={params.SM} '{{printf(\"thin\t%s\t%s\\n\", SM, $0);}}' > {output}"
  
 
 
