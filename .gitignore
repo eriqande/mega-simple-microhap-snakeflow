@@ -13,3 +13,6 @@ logs
 mapped_reads
 mapped_reads_thin
 thinned_genome
+.snakemake
+dag.pdf
+dag.ps
