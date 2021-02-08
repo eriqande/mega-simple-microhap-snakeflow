@@ -1,4 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 112 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile:
-Missing input files for rule coverage_full:
-CHLFAR3

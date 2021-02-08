@@ -1,8 +1,0 @@
-Building DAG of jobs...
-InputFunctionException in line 54 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile:
-Error:
-  KeyError: 'CHLFAR{1,2,3,4,5}'
-Wildcards:
-  sample=CHLFAR{1,2,3,4,5}
-Traceback:
-  File "/Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile", line 57, in <lambda>

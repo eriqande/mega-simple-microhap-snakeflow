@@ -1,8 +1,0 @@
-Building DAG of jobs...
-InputFunctionException in line 112 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile:
-Error:
-  AttributeError: 'Wildcards' object has no attribute 'sample'
-Wildcards:
-
-Traceback:
-  File "/Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/Snakefile", line 114, in <lambda>
