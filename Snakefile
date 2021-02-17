@@ -1,4 +1,7 @@
-configfile: "config.yaml"
+include: "rules/common.smk"
+include: "rules/calling.smk"
+
+
 
 
 # make a bedfile for our target regions from the full genome
@@ -152,8 +155,19 @@ rule catenate_coverages:
 
 
 
+# Make a plot of the coverages
+rule plot_coverages:
+  input:
+    "coverage/all_coverages.tsv"
+  output:
+    "plots/coverages-plot.pdf"
+  script:
+    "script/summarize-coverages.R"
+
 # tabulate the start positions and the CIGAR strings of
 # every read mapping in the extracted references. We want to
 # see if there are weird structural polymorphisms or other
 # vagaries on the mapping reads.
-
+# Gonna do this later...
+#
+# rule starts_and_CIGARs

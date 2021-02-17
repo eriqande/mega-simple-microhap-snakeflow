@@ -2,8 +2,11 @@
 
 library(tidyverse)
 
+input <- snakemake@input[[1]]
+output <- snakemake@output[[1]]
 
-cov <- read_tsv("coverage/all_coverages.tsv") %>%
+
+cov <- read_tsv(input) %>%
   select(
     genome_condition,
     sample,
@@ -26,6 +29,22 @@ cov <- read_tsv("coverage/all_coverages.tsv") %>%
   ) %>%
   mutate(indiv_depth_order = as.integer(factor(sample, levels = unique(sample))))
 
-ggplot(cov, aes(x = indiv_depth_order, y = full)) +
+g <- ggplot(cov, aes(x = indiv_depth_order, y = full)) +
   geom_col(colour = "blue", fill = "blue") +
-  facet_wrap(~ target)
+  facet_wrap(~ target) +
+  xlab("Indivs ordered by total read depth")
+
+
+# get number of targets
+NT <- n_distinct(cov$target)
+
+# set the width and height according to NT
+nt_width <- 5 + 2 * sqrt(NT)
+nt_height <- 5 + 2 * sqrt(NT)
+
+ggsave(
+  g,
+  filename = output,
+  width = nt_width,
+  height = nt_height
+)
