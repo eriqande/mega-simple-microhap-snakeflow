@@ -1,5 +1,6 @@
 configfile: "config.yaml"
 
+
 # make a bedfile for our target regions from the full genome
 rule region_bedfiles_full:
   params:
@@ -138,7 +139,7 @@ rule coverage_thin:
  
 
 
-# Now catenate all the full and thin coverges into a single
+# Now catenate all the full and thin coverages into a single
 # tsv file that we can analyze easily in the tidyverse
 rule catenate_coverages:
   input:
@@ -148,3 +149,11 @@ rule catenate_coverages:
   shell:
     "(echo \"genome_condition\tsample\tchrom\tstart\tstop\ttarget\tnum_reads\tnum_bases\tfeature_length\tfract_bases\"; "
     "cat {input}) > {output}"
+
+
+
+# tabulate the start positions and the CIGAR strings of
+# every read mapping in the extracted references. We want to
+# see if there are weird structural polymorphisms or other
+# vagaries on the mapping reads.
+
