@@ -15,6 +15,8 @@ rule bwa_map:
   envmodules:
     "aligners/bwa",
     "bio/samtools"
+  conda:
+    "../envs/bwasam.yaml"
   shell:
     "(bwa mem -R '{params.rg}' {input} | samtools view -Sb - | "
     "samtools sort -T mapped_reads/{wildcards.sample} -O bam - > {output.bam}; "
@@ -38,6 +40,8 @@ rule bwa_map_thinned:
   envmodules:
     "aligners/bwa",
     "bio/samtools"
+  conda:
+    "../envs/bwasam.yaml"
   shell:
     "(bwa mem -R '{params.rg}' {input} | samtools view -Sb - | "
     "samtools sort -T mapped_reads_thin/{wildcards.sample} -O bam - > {output}) 2> {log}"
@@ -56,6 +60,8 @@ rule extract_regions:
     regs=expand("{region}", region=config["regions"])
   envmodules:
     "bio/samtools"
+  conda:
+    "../envs/bwasam.yaml"
   shell:
     "samtools view -u {input} {params.regs} | "
     "samtools sort -T extracted_reads/{wildcards.sample} -O bam - > {output.bam}; "
