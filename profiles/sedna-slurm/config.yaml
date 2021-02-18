@@ -1,0 +1,3 @@
+jobs: 50
+cluster: "sbatch --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards}.out -e logs_slurm/{rule}_{wildcards}.err"
+default-resources: [cpus=1, mem_mb=4600]
