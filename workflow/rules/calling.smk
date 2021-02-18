@@ -31,8 +31,6 @@ rule haplotype_caller:
     # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     conda:
       "../envs/gatk.yaml"
-    envmodules:
-      "bio/bedtools"
     shell:
       "gatk --java-options '{params.java_opts}' HaplotypeCaller {params.extra} "
       "-L {input.bed} "

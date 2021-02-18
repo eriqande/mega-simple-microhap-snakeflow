@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+results
 bedfiles
 benchmarks
 coverage
@@ -16,3 +17,5 @@ thinned_genome
 .snakemake
 dag.pdf
 dag.ps
+filegraph.png
+rulegraph.png

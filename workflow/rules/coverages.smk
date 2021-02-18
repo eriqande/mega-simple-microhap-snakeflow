@@ -11,6 +11,8 @@ rule coverage_full:
     SM="{sample}"
   envmodules:
     "bio/bedtools"
+  conda:
+    "../envs/bedtools.yaml"
   shell:
     "bedtools coverage -a {input.a} -b {input.b} | "
     "awk -v SM={params.SM} '{{printf(\"full\t%s\t%s\\n\", SM, $0);}}' > {output}"
@@ -28,6 +30,8 @@ rule coverage_thin:
     SM="{sample}"
   envmodules:
     "bio/bedtools"
+  conda:
+    "../envs/bedtools.yaml"
   shell:
     "bedtools coverage -a {input.a} -b {input.b} | "
     "awk -v SM={params.SM} '{{printf(\"thin\t%s\t%s\\n\", SM, $0);}}' > {output}"
@@ -56,5 +60,5 @@ rule plot_coverages:
   envmodules:
     "R"
   script:
-    "results/script/summarize-coverages.R"
+    "../script/summarize-coverages.R"
 

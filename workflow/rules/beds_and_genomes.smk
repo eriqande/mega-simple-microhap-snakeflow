@@ -22,6 +22,8 @@ rule region_bedfiles_thin:
     "results/bedfiles/regions_thin.bed"
   envmodules:
     "bio/samtools"
+  conda:
+    "../envs/bwasam.yaml"
   shell:
     "samtools view -H {input.one} | awk '/^@SQ/ {{print $2, $3}}' | "
     "sed 's/SN://g; s/LN://g;' | "
@@ -46,6 +48,8 @@ rule make_thinned_genome:
   envmodules:
     "aligners/bwa",
     "bio/samtools"
+  conda:
+    "../envs/bwasam.yaml"
   shell:
     "samtools faidx {input.fa} {params.regs} > {output.fa}; "
     "samtools faidx {output.fa}; "
