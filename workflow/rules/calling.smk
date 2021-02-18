@@ -1,9 +1,9 @@
 
 rule make_bam_list:
   input:
-    bam=expand("extracted_reads/{sample}.bam", sample=config["samples"])
+    bam=expand("results/extracted_reads/{sample}.bam", sample=config["samples"])
   output:
-    "infiles/bamlist.list"
+    "results/infiles/bamlist.list"
   shell:
     "echo {input.bam} | "
     " awk '{{for(i=1;i<=NF;i++) print $i}}' > {output} "
@@ -13,14 +13,15 @@ rule make_bam_list:
 rule haplotype_caller:
     input:
         # single or list of bam files
-        bamlist="infiles/bamlist.list",
+        bamlist="results/infiles/bamlist.list",
+        bams=expand("results/extracted_reads/{sample}.bam", sample=config["samples"]),
         ref=config["genome"],
-        bed="bedfiles/regions_full.bed"
+        bed="results/bedfiles/regions_full.bed"
         # known="dbsnp.vcf"  # optional
     output:
-        vcf="calls/everyone.vcf",
+        vcf="results/calls/everyone.vcf",
     log:
-        "logs/gatk/haplotypecaller/everyone.log"
+        "results/logs/gatk/haplotypecaller/everyone.log"
     params:
         extra=" --max-reads-per-alignment-start  8000 ",  # optional
         java_opts=" -Xmx4g ", # optional
@@ -30,8 +31,10 @@ rule haplotype_caller:
     # https://snakemake.readthedocs.io/en/latest/executing/cluster.html#job-properties
     conda:
       "../envs/gatk.yaml"
+    envmodules:
+      "bio/bedtools"
     shell:
       "gatk --java-options '{params.java_opts}' HaplotypeCaller {params.extra} "
       "-L {input.bed} "
       "-R {input.ref} -I {input.bamlist} "
-      "-O {output.vcf}"
+      "-O {output.vcf} > {log} 2>&1 "

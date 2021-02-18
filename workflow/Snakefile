@@ -1,0 +1,27 @@
+include: "rules/common.smk"
+
+
+##### Target Rules #####
+
+rule all:
+  input:
+    "results/plots/coverages-plot.pdf",
+    "results/coverage/all_coverages.tsv",
+    "results/calls/everyone.vcf"
+
+
+##### Modules #####
+
+
+include: "rules/beds_and_genomes.smk"
+include: "rules/map_and_extract.smk"
+include: "rules/coverages.smk"
+include: "rules/starts_and_cigars.smk"
+include: "rules/calling.smk"
+
+
+
+
+
+
+
