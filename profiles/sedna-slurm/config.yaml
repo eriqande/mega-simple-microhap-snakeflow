@@ -1,3 +1,4 @@
 jobs: 50
-cluster: "sbatch --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards}.out -e logs_slurm/{rule}_{wildcards}.err"
+cluster: "mkdir -p results/slurm_logs/{rule}; sbatch -J {rule} --mem={resources.mem_mb} -c {resources.cpus} -o results/slurm_logs/{rule}/{rule}_{wildcards}.out -e results/slurm_logs/{rule}/{rule}_{wildcards}.err"
+use-conda: true
 default-resources: [cpus=1, mem_mb=4600]
