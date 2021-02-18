@@ -25,11 +25,11 @@ rule haplotype_caller:
     params:
         extra=" --max-reads-per-alignment-start  16000   --native-pair-hmm-threads 16 ",  # optional
         java_opts=" -Xmx64g ", # optional
-    resources: cpus=16
+    resources: cpus=16, mem_mb=75200
     conda:
       "../envs/gatk.yaml"
     shell:
       "gatk --java-options '{params.java_opts}' HaplotypeCaller {params.extra} "
       "-L {input.bed} "
       "-R {input.ref} -I {input.bamlist} "
-      "-O {output.vcf} > {log} 2>&1; sleep 120 "
+      "-O {output.vcf} > {log} 2>&1 "

@@ -1,3 +1,10 @@
+# Note: on sedna, each core comes with 4.7 Gb of RAM, typically.  On
+# SUMMIT, I don't think you can get any less RAM with each core.  But,
+# the way the defaults are set here, if you want to include cpus=8
+# in the resources for a particular rule, you had best also set mem_mb
+# to be 4700 * cpus.  Otherwise, you might not end up with all the memory
+# you desire.
+
 jobs: 50
 cluster: "mkdir -p results/slurm_logs/{rule}; sbatch -J {rule} --mem={resources.mem_mb} -c {resources.cpus} -o results/slurm_logs/{rule}/{rule}_{wildcards}.out -e results/slurm_logs/{rule}/{rule}_{wildcards}.err"
 use-conda: true
