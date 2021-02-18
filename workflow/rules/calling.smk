@@ -23,9 +23,9 @@ rule haplotype_caller:
     log:
         "results/logs/gatk/haplotypecaller/everyone.log"
     params:
-        extra=" --max-reads-per-alignment-start  8000   --native-pair-hmm-threads 16 ",  # optional
+        extra=" --max-reads-per-alignment-start  16000   --native-pair-hmm-threads 16 ",  # optional
         java_opts=" -Xmx64g ", # optional
-    resources: cpus=16, mem_mb=64000
+    resources: cpus=16
     conda:
       "../envs/gatk.yaml"
     shell:
