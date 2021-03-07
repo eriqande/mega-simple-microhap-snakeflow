@@ -33,3 +33,9 @@ rule haplotype_caller:
       "-L {input.bed} "
       "-R {input.ref} -I {input.bamlist} "
       "-O {output.vcf} > {log} 2>&1 "
+      
+      
+# GATK is hopeless.  Here is a better way forward:
+#  bcftools mpileup -f $GENOME -R results/bedfiles/regions_full.bed -a AD,DP,INFO/AD  -b results/infiles/bamlist.list  -B  -q 20 -Q 20 | bcftools call -v -m  | bcftools sort > splud2.vcf
+# 
+# To have a quick look at it we can do: bcftools query -f '%CHROM  %POS  %REF  %ALT{0}   %INFO/AD\n' splud2.vcf

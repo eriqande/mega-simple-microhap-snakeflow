@@ -1,0 +1,18 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+description: row of the samples.csv file that includes sample name, NMFS_ID_PLATE, fastq location, etc.
+type: object
+properties:
+  Sample_ID:
+    type: string
+    description: sample name/id specific to the particular GT-seq run
+  Sample_Plate:
+    type: string
+    description: the NMFS_DNA_ID, Extraction Plate, and the Sample Well, joined by underscores
+  Flashed:
+    type: string
+    description: path to the flashed file
+
+required:
+  - Sample_ID
+  - Sample_Plate
+  - Flashed
