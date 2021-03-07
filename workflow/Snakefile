@@ -5,19 +5,19 @@ include: "rules/common.smk"
 
 rule all:
   input:
-    "results/plots/coverages-plot.pdf",
-    "results/coverage/all_coverages.tsv",
-    "results/calls/everyone.vcf"
+    "results/bams/fullg/Otsh_v1.0/CH_001.bam"
 
 
 ##### Modules #####
 
 
-include: "rules/beds_and_genomes.smk"
-include: "rules/map_and_extract.smk"
-include: "rules/coverages.smk"
-include: "rules/starts_and_cigars.smk"
-include: "rules/calling.smk"
+include: "rules/full_genome_map_and_extract.smk"
+
+#include: "rules/beds_and_genomes.smk"
+#include: "rules/map_and_extract.smk"
+#include: "rules/coverages.smk"
+#include: "rules/starts_and_cigars.smk"
+#include: "rules/calling.smk"
 
 
 

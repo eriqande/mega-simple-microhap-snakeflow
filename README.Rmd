@@ -13,6 +13,26 @@ at making a SnakeMake-based workflow for our microhaplotypes.
 
 # The way forward
 
+OK, after a lot of thinking and experimenting, this is how I
+want to do it:
+
+The input data will all come in a single directory with the following
+items in it:
+
+- `samples.csv`: the list of samples
+- `units.csv`: the units file.
+- `raw/`: a directory full of the paired end fastq file.  
+
+In the config file (or more likely on the command line) we specify the
+path (relative or absolute) of this directory, calling it the `run_dir`.  
+
+Actually, we might allow that the `run_dir` could be a list, if we wanted it
+to be.  In which case the workflow would operate over multiple directories.
+Actually, that would be a huge PITA, so I will not do that...
+
+But, I think that I will specify the run_dir as a wildcard in the workflow, because
+otherwise I have to repeatedly use the format method on a bunch of paths...
+
 ## samples.csv and units.csv
 
 After a lot of learning and then figuring out what we need for our
@@ -62,7 +82,7 @@ This file is in `config/newconfig.yaml`.  So far it looks like this:
 `r paste(readLines("config/config.yaml"), collapse = "\n")`
 ```
 
-# Notes on Devlopment
+# Notes on Development
 
 For someone like me who is not super familiar with python, it
 is nice to be able to test various constructions in the python
@@ -71,7 +91,7 @@ interpreter.  In order to have access to variables like the
 with functions from snakemake's io module like this:
 ```python
 from snakemake.io import load_configfile
-config = load_configfile("config/newconfig.yaml")
+config = load_configfile("config/config.yaml")
 
 # then test to see if we have things where we expect them:
 config["run"]
@@ -87,6 +107,20 @@ config["genome_focused_marker_sets"]["names"]
 
 ```
 
+# Genomes and target_fastas
+
+The target fastas are going to be stored in `config/target_fastas`.
+The genomes will have to be downloaded and stored in `resources/genomes/Otsh_v1.0`,
+for example.
+
+For testing, I just touch such a genome file and a target_fastas file:
+```sh
+mkdir -p resources/genomes/Otsh_v1.0/
+touch resources/genomes/Otsh_v1.0/Otsh_v1.0.fna
+
+mkdir -p config/target_fastas
+touch config/target_fastas/transition-panel.fna
+```
 # Old stuff
 
 To use it, place the flashed fastqs in the `data/samples` directory.

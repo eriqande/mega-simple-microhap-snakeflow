@@ -1,11 +1,11 @@
 species: Chinook
 
-run: gtseq01
+run_dir: .test/data
 
-# the following are names of files assumed to be
-# within the run directory
-samples: .test/data/samples.csv
-units: .test/data/units.csv
+# the following are names of files that assumed to be
+# within the run_dir
+samples: samples.csv
+units: units.csv
 
 # set genomes up to be downloaded from url.  They will
 # be placed in resources/genomes/name_of_genome/name_of_genome.fna
@@ -35,6 +35,6 @@ marker_sets:
       Otsh_v1.0:
         regions: config/regions/ROSA-Otsh_v1.0.txt
   TRANSITION:
-    target_fasta: config/target_fastas/transition-panel-target-fasta.fna
+    target_fasta: config/target_fastas/transition-panel.fna
 
 

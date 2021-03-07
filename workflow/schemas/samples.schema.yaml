@@ -24,6 +24,7 @@ properties:
 required:
   - Sample_ID
   - NMFS_DNA_ID
+  - Plate
   - Marker_Sets
   - fq1
   - fq2
