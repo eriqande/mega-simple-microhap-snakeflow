@@ -35,6 +35,6 @@ marker_sets:
       Otsh_v1.0:
         regions: config/regions/ROSA-Otsh_v1.0.txt
   TRANSITION:
-    target_fasta: config/target_fasta/transition-panel-target-fasta.fna
+    target_fasta: config/target_fastas/transition-panel-target-fasta.fna
 
 
