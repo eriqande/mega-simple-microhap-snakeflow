@@ -7,7 +7,6 @@ bedfiles
 benchmarks
 coverage
 dag.png
-data
 extracted_reads
 genome
 logs
@@ -19,3 +18,5 @@ dag.pdf
 dag.ps
 filegraph.png
 rulegraph.png
+/data
+

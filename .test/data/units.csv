@@ -1,0 +1,15 @@
+Sample_ID,Markers,NMFS_DNA_ID,Plate,fq1,fq2
+CH_001,LFAR,T0123,W56,gtseq112/raw/CH-001-aaqr-R1.fq.gz,gtseq112/raw/CH-001-aaqr-R2.fq.gz
+CH_002,ROSA,T0124,W56,gtseq112/raw/CH-002-aaqr-R1.fq.gz,gtseq112/raw/CH-002-aaqr-R2.fq.gz
+CH_003,WRAP,T0125,W56,gtseq112/raw/CH-003-aaqr-R1.fq.gz,gtseq112/raw/CH-003-aaqr-R2.fq.gz
+CH_004,TRANSITION,T0126,W56,gtseq112/raw/CH-004-aaqr-R1.fq.gz,gtseq112/raw/CH-004-aaqr-R2.fq.gz
+CH_005,LFAR,T0127,W56,gtseq112/raw/CH-005-aaqr-R1.fq.gz,gtseq112/raw/CH-005-aaqr-R2.fq.gz
+CH_005,WRAP,T0127,W56,gtseq112/raw/CH-005-aaqr-R1.fq.gz,gtseq112/raw/CH-005-aaqr-R2.fq.gz
+CH_006,TRANSITION,T0128,W56,gtseq112/raw/CH-006-aaqr-R1.fq.gz,gtseq112/raw/CH-006-aaqr-R2.fq.gz
+CH_006,ROSA,T0128,W56,gtseq112/raw/CH-006-aaqr-R1.fq.gz,gtseq112/raw/CH-006-aaqr-R2.fq.gz
+CH_007,ROSA,T0129,W56,gtseq112/raw/CH-007-aaqr-R1.fq.gz,gtseq112/raw/CH-007-aaqr-R2.fq.gz
+CH_007,TRANSITION,T0129,W56,gtseq112/raw/CH-007-aaqr-R1.fq.gz,gtseq112/raw/CH-007-aaqr-R2.fq.gz
+CH_007,WRAP,T0129,W56,gtseq112/raw/CH-007-aaqr-R1.fq.gz,gtseq112/raw/CH-007-aaqr-R2.fq.gz
+CH_008,WRAP,T0130,W56,gtseq112/raw/CH-008-aaqr-R1.fq.gz,gtseq112/raw/CH-008-aaqr-R2.fq.gz
+CH_008,ROSA,T0130,W56,gtseq112/raw/CH-008-aaqr-R1.fq.gz,gtseq112/raw/CH-008-aaqr-R2.fq.gz
+CH_008,LFAR,T0130,W56,gtseq112/raw/CH-008-aaqr-R1.fq.gz,gtseq112/raw/CH-008-aaqr-R2.fq.gz

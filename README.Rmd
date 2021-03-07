@@ -11,6 +11,84 @@ This repository holds the Snakefile and associated files for Eric's first attemp
 (still under construction!)
 at making a SnakeMake-based workflow for our microhaplotypes.
 
+# The way forward
+
+## samples.csv and units.csv
+
+After a lot of learning and then figuring out what we need for our
+microhap workflow, this is how we are going to do it:
+
+1. Each run will come off the machine, and it will be associated with
+a `samples.csv` file that gives the run-names
+(i.e. like CH_117_LFAR_001) of the individual
+samples.  These are apparently based on the individually barcoded
+units in the run, so each run-name gets broken into its own pair
+of fastq files.  There might be multiple species on a run.
+2. The first step, which is not part of the snakemake workflow is to
+use an R script to break the run into different folders, one for each
+species.  Each folder has a `samples.csv` file and a `raw` directory
+that houses the fastq files.  This step also creates a `units.csv` file
+that includes one line for each "unit" which in this case is the
+combination of a run-name _and_ a marker set (which would be based on
+the PCR primers, like LFAR, WRAP, ROSA, TRANSITION, etc.)
+
+A little explanation will be helpful here.  In `.test/data/samples.csv`
+I have a simple example:
+```{r, message=FALSE}
+library(tidyverse)
+
+samples <- read_csv(".test/data/samples.csv")
+
+samples
+```
+
+From this, the units.tsv file would have been made, something like this:
+```r
+units <- samples %>%
+  mutate(Markers = str_split(Marker_Sets, "\\s*,\\s*")) %>%
+  unnest(cols = Markers) %>%
+  select(-Marker_Sets) %>%
+  select(Sample_ID, Markers, everything())
+```
+Those have been stored in `.test/data/units.csv` and look like this:
+```{r, message=FALSE}
+read_csv(".test/data/units.csv")
+```
+
+## The config file
+
+This file is in `config/newconfig.yaml`.  So far it looks like this:
+```yaml
+`r paste(readLines("config/config.yaml"), collapse = "\n")`
+```
+
+# Notes on Devlopment
+
+For someone like me who is not super familiar with python, it
+is nice to be able to test various constructions in the python
+interpreter.  In order to have access to variables like the
+`config` dictionary when doing that, we can read it in
+with functions from snakemake's io module like this:
+```python
+from snakemake.io import load_configfile
+config = load_configfile("config/newconfig.yaml")
+
+# then test to see if we have things where we expect them:
+config["run"]
+config["marker_sets"]["LFAR"]["genome"].keys()
+config["marker_sets"]["LFAR"]["genome"]["Otsh_v1.0"]["regions"]
+
+# or this, which returns a list of the regions files for LFAR over
+# all the genomes (although there is only one)
+[config["marker_sets"]["LFAR"]["genome"][x]["regions"] for x in config["marker_sets"]["LFAR"]["genome"].keys()]
+
+# or get a list of all the marker sets that are genome-focused
+config["genome_focused_marker_sets"]["names"]
+
+```
+
+# Old stuff
+
 To use it, place the flashed fastqs in the `data/samples` directory.
 (Note! We will put the flashing step in here too, soon!).
 Then list the names of the samples and the paths to those fastqs in
