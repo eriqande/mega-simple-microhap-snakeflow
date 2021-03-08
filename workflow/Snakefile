@@ -11,9 +11,13 @@ rule all:
 ##### Modules #####
 
 
+include: "rules/create_bedfiles_and_thinned_genomes.smk"
+include: "rules/flash.smk"
 include: "rules/full_genome_map_and_extract.smk"
+include: "rules/target_fastas_map.smk"
 
-#include: "rules/beds_and_genomes.smk"
+
+
 #include: "rules/map_and_extract.smk"
 #include: "rules/coverages.smk"
 #include: "rules/starts_and_cigars.smk"

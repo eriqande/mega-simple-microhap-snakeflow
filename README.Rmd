@@ -1,6 +1,11 @@
 ---
 title: "mega-simple-microhap-snakeflow"
-output: github_document
+output: 
+  html_document:
+    toc: true
+  github_document:
+    toc: true
+
 ---
 
 ```{r setup, include=FALSE}
@@ -84,9 +89,15 @@ This file is in `config/newconfig.yaml`.  So far it looks like this:
 
 # Notes on Development
 
+## Testing python snippets
+
 For someone like me who is not super familiar with python, it
 is nice to be able to test various constructions in the python
-interpreter.  In order to have access to variables like the
+interpreter.  Here are some fun tricks to allows that to happen.
+
+### Interpreter access to `config` variable
+
+In order to have access to variables like the
 `config` dictionary when doing that, we can read it in
 with functions from snakemake's io module like this:
 ```python
@@ -106,6 +117,126 @@ config["marker_sets"]["LFAR"]["genome"]["Otsh_v1.0"]["regions"]
 config["genome_focused_marker_sets"]["names"]
 
 ```
+
+### Interactive python-session testing of input functions
+
+Often we need to write functions that return possible file names and
+paths to the `input` field of a rule.  It is nice to be able to
+test those just in an interactive python session.  We can do that
+by making our own `wildcards` object, and then assigning attributes
+to it and passing it to our functions.
+
+That goes like this:
+```python
+
+# create a generic object class (called Foo here)
+class Foo(object):
+    pass
+
+# make a variable, wildcards, which is an object of that class
+wildcards = Foo()
+
+# now, if you want to test specific values you can do like:
+wildcards.marker_set = "LFAR"
+wildcards.genome = "Otsh_v1.0"
+
+# then, if you have a function that uses the marker_set and the genome
+# attributes of the wildcards, like:
+
+def region_files_from_marker_set_and_genome(wildcards):
+    """Get path to the regions file given the genome and marker set"""
+    return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["regions"]
+
+# then you can test it (assuming you have defined the config variable into your
+# interactive session of python using the trick from above), like this:
+
+region_files_from_marker_set_and_genome(wildcards)
+
+# and the result is:
+'config/regions/LFAR-Otsh_v1.0.txt'
+
+# which is just what we want it to be.
+
+```
+
+
+## Getting filepaths and wildcards right
+
+Just understanding the wildcarding framework of snakemake can
+take a while to get your head around. This microhap workflow is
+pretty beastly because there are many different options (genomes,
+target_fastas, regions, etc.)  One cool thing to realize was that
+all those different, possible, analysis pathways could be handled
+by using wildcards.  And once all those wildcards were in place, the
+actual analyses done would be determined by what the desired end result
+is. (More on that later: a key to all this is figuring out how to elegantly
+use the config file and the samples.csv and units.csv to properly expand
+needed inputs in the aggregation steps (like VCF creation)).
+
+### Put fast commands in to check the wildcard framework
+
+While developing the workflow, I wanted
+to start out focusing on making sure that I had the wildcarding and
+paths correct, without worrying too much, at first, about making sure
+the exact command (i.e., for mapping, etc.).   So, when making new
+rules, I would just echo what I thought the command should be into the
+output file.  That way I could check everything.
+
+Note that snakemake has the `--touch` option, which might do something
+similar.  But, while developing stuff and making sure the
+wildcarding framework is correct, just populating the `shell` blocks
+with simple commands like:
+```python
+shell:
+    "echo bwa mem -R {params.rg} {input.g} {input.EF} > {output.bam}; "
+    "touch {output.bai}"
+```
+seems to be a pretty good way to go.
+
+I will just point out here that by using this approach I have managed to
+verify the logic of the workflow, while developing it, without actually having
+to get the real data from anyone.  I just created some sample names and genome
+names, and touched "fastq" files.  This has let me quickly figure out if the logic
+works, for example, in cases where one marker set might be typed via a full-genome
+approach and also via a target fasta approach.  
+
+### Definitely get the `tree` command
+
+`tree` is a Unix utility that plots diagrammatic trees of your
+directory structure.  You can get it on a Mac via Homebrew with:
+```sh
+brew install tree
+```
+
+This turns out to be **absolutely indispensable** when it comes to
+grokking out the file hierarchies that get created when you run a
+snakemake workflow.  It is especially helpful during development if
+your workflow is particularly large and it is hard to keep track of
+all the files that are getting created.  Here is a screenshot
+of my terminal after a `tree` command.
+
+![images_for_readme/tree-grap.png](images_for_readme/tree-grab.png)
+
+### Remember to use Unix file iteration/alternation to specify requested output files
+
+When developing a rule and wondering if the wildcards are set up properly, it is really
+helpful to request the exact target file that should be created by the rule.  Remember, as
+pointed out in the snakemake manual, that you can use the Unix `{this,that,the_other}` construct
+to put those files on the command line.  The same goes for putting series of numbers using
+`{1..8}`, for example.  Thus, while developing this, I can request certain output files from
+snakemake like this:
+```sh
+snakemake -np \
+    .test/data/bams/fullg/{Otsh_v1.0,nookie2}/CH_00{1..8}.bam \
+    .test/data/bams/target_fastas/ROSA/{rosa_seqs_1,rosa_seqs_2}/CH_00{1..8}.bam \
+    .test/data/bams/target_fastas/TRANSITION/transition-panel/CH_00{1..8}.bam \
+    resources/bedfiles/fullg/{LFAR,WRAP,ROSA}-Otsh_v1.0.bed  \
+    resources/thinned_genomes/Otsh_v1.0/{LFAR,WRAP,ROSA}/thinned.fa
+```
+This is good for testing your grammar in those early steps without having to specifically
+deal with the aggregation that might come later (i.e., the VCF-making step).
+
+
 
 # Genomes and target_fastas
 

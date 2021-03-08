@@ -1,15 +1,3 @@
-# make a bedfile for our target regions from the full genome
-rule region_bedfiles_full:
-  params:
-    reg=expand("{region}", region=config["regions"])
-  output:
-    "results/bedfiles/regions_full.bed"
-  shell:
-    "echo {params.reg} | "
-    "awk '{{for(i=1;i<=NF;i++) print $i}}' | "
-    "sed 's/[-:]/ /g' | "
-    "awk 'BEGIN {{OFS=\"\t\"}} {{print $1, $2-1, $3, $1\":\"$2\"-\"$3}}' > {output}"
-
 
 
 # we make a bedfile that we can use for checking the depth
