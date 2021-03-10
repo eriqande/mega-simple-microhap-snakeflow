@@ -5,7 +5,7 @@ include: "rules/common.smk"
 
 rule all:
   input:
-    "results/bams/fullg/Otsh_v1.0/CH_001.bam"
+    requested_vcfs_from_units_and_config()
 
 
 ##### Modules #####

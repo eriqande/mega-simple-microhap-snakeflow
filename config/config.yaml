@@ -2,7 +2,7 @@ species: Chinook
 
 run_dir: .test/data
 
-# the following are names of files that assumed to be
+# the following are names of files that are assumed to be
 # within the run_dir
 samples: samples.csv
 units: units.csv
@@ -17,6 +17,11 @@ genomes:
     url: this_would_need_a_download_url_too
 
 
+
+# NOTE: I should be able to replace the next 4 lines of code
+# by simply cycling over config["marker_sets"] and making
+# lists of the marker_sets that have a "genome" and those
+# that have a "target_fasta".  But for now I leave it in here.
 # The name element must be specified as a list here!
 genome_focused_marker_sets:
   name: ["LFAR", "WRAP", "ROSA"]

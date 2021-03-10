@@ -96,7 +96,32 @@ def target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards):
 
 
 
+#### Functions for defining output files from units and config ####
 
+
+# from unit.csv (now available in gf_units and tf_units) get all the different
+# vcf outputs that we should be expecting.  This means cycling over all the
+# different genomes and target_fastas in config, as well.
+def requested_vcfs_from_units_and_config():
+    """get list of vcf outputs we expect from the units and the config file"""
+    # start with the genome-focused ones
+    # here are the unique marker sets called for:
+    MS = list(set(list(gf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    gf = list()
+    for m in MS:
+        # list of full genomes they are associated with
+        g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
+        gf = gf + expand("{rd}/vcfs/{ms}/fullg/{g}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, g = g)
+    # then do the target-fasta focused ones
+    MS = list(set(list(tf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    tf = list()
+    for m in MS:
+        # list of full genomes they are associated with
+        t = [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]
+        tf = tf + expand("{rd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, t = t)
+    return gf + tf
 
 
 
