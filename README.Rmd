@@ -89,6 +89,27 @@ This file is in `config/newconfig.yaml`.  So far it looks like this:
 
 # Notes on Development
 
+## Some python that is good to know
+
+### Flattening lists
+
+Since the `+` operator catenates elements of lists together:
+```python
+>>> a = [1]; b = [2]; a + b
+[1, 2]
+```
+You can also use sum to flatten lists:
+```python
+>>> lumpy = [[1, 2, 3], [8, 9, 10], [4], [5]]
+>>> lumpy
+[[1, 2, 3], [8, 9, 10], [4], [5]]
+
+# the second argument here is the starting list to start catenating to.
+# So we pass it an empty list...
+>>> sum(lumpy, [])
+[1, 2, 3, 8, 9, 10, 4, 5]
+```
+
 ## Testing python snippets
 
 For someone like me who is not super familiar with python, it
@@ -159,11 +180,68 @@ region_files_from_marker_set_and_genome(wildcards)
 
 ```
 
+Note that if you want to see what all the current values are in the
+wildcards object that you have defined for testing, you can do that with:
+```python
+ wildcards.__dict__
+```
+which will produce output like:
+```
+{'marker_set': 'TRANSITION', 'genome': 'Otsh_v1.0', 'target_fasta': 'transition-panel', 'run_dir': '.test/data'}
+```
+
+#### Using values that caused things to fail
+
+Sometimes you get a message like this when there is a failure:
+```sh
+InputFunctionException in line 24 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/workflow/rules/full_genome_map_and_extract.smk:
+Error:
+  KeyError: 'nookie2'
+Wildcards:
+  run_dir=.test/data
+  marker_set=ROSA
+  genome=nookie2
+  sample=CH_002
+Traceback:
+  File "/Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/workflow/rules/common.smk", line 40, in region_files_from_marker_set_and_genome
+```
+It would be nice to set a local wildcards variable to have those values. Here is a script that does that,
+if you first copy out these lines and have them in your clipboard:
+```
+  run_dir=.test/data
+  marker_set=ROSA
+  genome=nookie2
+  sample=CH_002
+```
+Then run this script:
+```sh
+# if the error values of snakemake wildcards are on your clipboard like this:
+#
+#  run_dir=.test/data
+#  marker_set=ROSA
+#  genome=nookie2
+#  sample=CH_002
+#
+# Then, run this script and it will put the python code to assign such
+# values to a local wildcards variable onto your clipboard
+
+pbpaste | sed 's/^ *//g; s/ *$//g;' |  awk -F"=" '{printf("wildcards.%s = \"%s\";\n", $1,$2)}' | pbcopy
+
+```
+i.e., put that into a script called `wilcard_em.sh` in your PATH, and then invoke it and your clipboard will then have:
+```python
+wildcards.run_dir = ".test/data";
+wildcards.marker_set = "ROSA";
+wildcards.genome = "nookie2";
+wildcards.sample = "CH_002";
+```
+which you can paste into python for testing.
+
 
 ## Getting filepaths and wildcards right
 
 Just understanding the wildcarding framework of snakemake can
-take a while to get your head around. This microhap workflow is
+take a while to get your head around. This microha workflow is
 pretty beastly because there are many different options (genomes,
 target_fastas, regions, etc.)  One cool thing to realize was that
 all those different, possible, analysis pathways could be handled
@@ -231,12 +309,74 @@ snakemake -np \
     .test/data/bams/target_fastas/ROSA/{rosa_seqs_1,rosa_seqs_2}/CH_00{1..8}.bam \
     .test/data/bams/target_fastas/TRANSITION/transition-panel/CH_00{1..8}.bam \
     resources/bedfiles/fullg/{LFAR,WRAP,ROSA}-Otsh_v1.0.bed  \
-    resources/thinned_genomes/Otsh_v1.0/{LFAR,WRAP,ROSA}/thinned.fa
+    resources/thinned_genomes/Otsh_v1.0/{LFAR,WRAP,ROSA}/thinned.fa \
+    .test/data/bams/fullg-extracted/{LFAR,WRAP,ROSA}/Otsh_v1.0/CH_00{1..8}.bam \
+    .test/data/bams/fullg-extracted/LFAR/nookie2/CH_00{1..8}.bam
 ```
-This is good for testing your grammar in those early steps without having to specifically
+This is good for testing your grammar/logic in those early steps without having to specifically
 deal with the aggregation that might come later (i.e., the VCF-making step).
 
+The above block was great for seeing if all my bam creation and extraction steps
+were solid.
 
+Now, to see if my rules that involve expanding over units to create the
+vcfs are working, I might try this:
+```sh
+snakemake -np \
+    .test/data/vcfs/LFAR/fullg/{Otsh_v1.0,nookie2}/variants-bcftools.vcf
+
+```
+
+## Handling units and samples
+
+I could get whatever I need from these in a couple lines in R, but
+snakemake is done in python, so, I need to figure that out.  I am sure
+there are muliple ways to do all these things, I am just going to find
+one that works.
+
+I decided it would be easiest to break units into two pandas data frames:
+one for the Markers that had target fastas, and another for the Markers
+that were genome-focused.
+```python
+# code like this goes into common.smk
+tf_units = units[tflist == True]
+tflist = units["Markers"].isin(config["target_fasta_focused_marker_sets"]["name"])
+```
+
+I need to cycle over the rows in units, and for each one return a path for combination
+of:
+
+- sample
+- marker_set
+- genome of marker_set (if any)
+- target_fasta of marker set (if any)
+
+Note that for testing things in a python session, it might be useful to
+do:
+```python
+from snakemake.io import expand
+```
+Then we should be able to iterate over the rows in units like this:
+```python
+for index, row in tf_units.iterrows():
+  print(row['Sample_ID'], row['Markers'])
+
+for index, row in gf_units.iterrows():
+  print(row['Sample_ID'], row['Markers'])
+
+
+```
+So, we just have to figure out how to expand those over the possible genomes and
+target fastas...
+```python
+ret = list()
+for index, row in tf_units.iterrows():
+  S = row['Sample_ID']
+  M = row['Markers']
+  ret = ret + expand("{M}--{k}--{S}", M = M, S = S, k =  [str(k) for k in config["marker_sets"][M]["target_fasta"].keys()] )
+
+
+```
 
 # Genomes and target_fastas
 

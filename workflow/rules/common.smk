@@ -63,4 +63,40 @@ def fna_from_marker_set_and_target_fasta(wildcards):
     return config["marker_sets"][wildcards.marker_set]["target_fasta"][wildcards.target_fasta]
 
 
+def fullg_bam_inputs_for_calling_from_marker_set_and_genome(wildcards):
+    """get list of input bams for every sample for a given marker_set and genome"""
+    # first, get the pandas data frame of samples for the particular marker set
+    DF = gf_units[gf_units["Markers"].isin([wildcards.marker_set])]
+    # then cycle over those rows and make a list of paths
+    ret = list()
+    for index, row in DF.iterrows():
+        S = row['Sample_ID']
+        ret = ret + [r"{R}/bams/fullg-extracted/{M}/{G}/{S}.bam".format(
+        R = wildcards.run_dir,
+        M = wildcards.marker_set,
+        G = wildcards.genome,
+        S = S)]
+    return ret
+
+
+def target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards):
+    """get list of input bams for every sample for a given marker_set and genome"""
+    # first, get the pandas data frame of samples for the particular marker set
+    DF = tf_units[tf_units["Markers"].isin([wildcards.marker_set])]
+    # then cycle over those rows and make a list of paths
+    ret = list()
+    for index, row in DF.iterrows():
+        S = row['Sample_ID']
+        ret = ret + [r"{R}/bams/target_fastas/{M}/{T}/{S}.bam".format(
+        R = wildcards.run_dir,
+        M = wildcards.marker_set,
+        T = wildcards.target_fasta,
+        S = S)]
+    return ret
+
+
+
+
+
+
 

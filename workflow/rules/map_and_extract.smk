@@ -1,69 +1,65 @@
-# map all the reads to the full genome
-rule bwa_map:
+
+#### THIS SECTION IS MAPPING TO FULL GENOMES, THEN EXTRACTING  ####
+
+# map reads to the requested full genome
+rule map_to_full_genome:
   input:
-    config["genome"],
-    lambda wildcards: config["samples"][wildcards.sample]
+    g=fna_from_genome,
+    EF="{run_dir}/flash/{sample}-extendedFrags.fna.gz"
   output:
-    bam="results/mapped_reads/{sample}.bam",
-    bai="results/mapped_reads/{sample}.bam.bai"
+    bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",
+    bai="{run_dir}/bams/fullg/{genome}/{sample}.bam.bai"
   params:
     rg=r"@RG\tID:{sample}\tSM:{sample}"
   log:
-    "results/logs/bwa_map/{sample}.log"
-  benchmark:
-    "results/benchmarks/bwa_map/{sample}.benchmark.txt"
-  envmodules:
-    "aligners/bwa",
-    "bio/samtools"
+    "{run_dir}/logs/map_to_full_genome/{genome}/{sample}.log"
   conda:
     "../envs/bwasam.yaml"
   shell:
-    "(bwa mem -R '{params.rg}' {input} | samtools view -Sb - | "
-    "samtools sort -T mapped_reads/{wildcards.sample} -O bam - > {output.bam}; "
-    "samtools index {output.bam}) 2> {log}"
-
-
-
-# map all the reads to the thinned genome
-rule bwa_map_thinned:
-  input:
-    "results/thinned_genome/thinned.fa",
-    lambda wildcards: config["samples"][wildcards.sample]
-  output:
-    "results/mapped_reads_thin/{sample}.bam"
-  params:
-    rg=r"@RG\tID:{sample}\tSM:{sample}"
-  log:
-    "results/logs/bwa_map_thinned/{sample}.log"
-  benchmark:
-    "results/benchmarks/bwa_map_thinned/{sample}.benchmark.txt"
-  envmodules:
-    "aligners/bwa",
-    "bio/samtools"
-  conda:
-    "../envs/bwasam.yaml"
-  shell:
-    "(bwa mem -R '{params.rg}' {input} | samtools view -Sb - | "
-    "samtools sort -T mapped_reads_thin/{wildcards.sample} -O bam - > {output}) 2> {log}"
-
+    "echo bwa mem -R {params.rg} {input.g} {input.EF} > {output.bam}; "
+    "touch {output.bai}"
 
 
 # extract the reads overlapping our target regions when mapped
 # to the full genome
-rule extract_regions:
+rule extract_reads_from_full_genomes:
   input:
-    "results/mapped_reads/{sample}.bam"
+    bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",
+    regfile=region_files_from_marker_set_and_genome
   output:
-    bam="results/extracted_reads/{sample}.bam",
-    bai="results/extracted_reads/{sample}.bam.bai"
-  params:
-    regs=expand("{region}", region=config["regions"])
+    bam="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
+    bai="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai"
   envmodules:
     "bio/samtools"
+  log:
+    "{run_dir}/logs/extract_reads_from_full_genomes/{marker_set}/{genome}/{sample}.log"
   conda:
     "../envs/bwasam.yaml"
   shell:
-    "samtools view -u {input} {params.regs} | "
-    "samtools sort -T extracted_reads/{wildcards.sample} -O bam - > {output.bam}; "
-    "samtools index {output.bam}"
+    "echo samtools view -u {input.bam} $(cat {input.regfile}) > {output.bam} 2> {log}; touch {output.bai} "
+#   "samtools sort -T extracted_reads/{wildcards.sample} -O bam - > {output.bam}; "
+#   "samtools index {output.bam}"
 
+
+
+
+#### THIS SECTION IS MAPPING TO TARGET FASTAS WITH NO EXTRACTING NECESSARY ####
+
+
+# map reads to the requested full genome
+rule map_to_target_fastas:
+  input:
+    g=fna_from_marker_set_and_target_fasta,
+    EF="{run_dir}/flash/{sample}-extendedFrags.fna.gz"
+  output:
+    bam="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam",
+    bai="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam.bai"
+  params:
+    rg=r"@RG\tID:{sample}\tSM:{sample}"
+  log:
+    "{run_dir}/logs/map_to_target_fastas/{marker_set}/{target_fasta}/{sample}.log"
+  conda:
+    "../envs/bwasam.yaml"
+  shell:
+    "echo bwa mem -R {params.rg} {input.g} {input.EF} > {output.bam} 2> {log}; "
+    "touch {output.bai}"
