@@ -12,7 +12,7 @@ units: units.csv
 # where name_of_genome is like Otsh_v1.0
 genomes:
   Otsh_v1.0:
-    url: put_here_the_download_url
+    url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/872/995/GCF_002872995.1_Otsh_v1.0/GCF_002872995.1_Otsh_v1.0_genomic.fna.gz
   nookie2:
     url: this_would_need_a_download_url_too
 
