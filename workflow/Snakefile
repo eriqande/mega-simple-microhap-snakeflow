@@ -10,7 +10,7 @@ rule all:
 
 ##### Modules #####
 
-
+include: "rules/download_and_index_genomes.smk"
 include: "rules/create_bedfiles_and_thinned_genomes.smk"
 include: "rules/flash.smk"
 include: "rules/map_and_extract.smk"

@@ -5,6 +5,7 @@
 rule map_to_full_genome:
   input:
     g=fna_from_genome,
+    bwt=fna_bwt_from_genome,
     EF="{run_dir}/flash/{sample}-extendedFrags.fna.gz"
   output:
     bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",

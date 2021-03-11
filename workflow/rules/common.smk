@@ -35,6 +35,10 @@ tf_units = units[tflist == True]
 
 #### Functions for turning wildcards into input values ####
 
+def genome_url_from_genome(wildcards):
+    """Get the URL for downloading the genome"""
+    return config["genomes"][wildcards.genome]["url"]
+
 def region_files_from_marker_set_and_genome(wildcards):
     """Get path to the regions file given the genome and marker set"""
     return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["regions"]
@@ -42,6 +46,10 @@ def region_files_from_marker_set_and_genome(wildcards):
 def fna_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
+
+def fna_bwt_from_genome(wildcards):
+    """Get path to genome fasta from a given genome"""
+    return r"resources/genomes/{genome}/{genome}.fna.bwt".format(genome=wildcards.genome)
 
 def fq1_from_sample_and_run(wildcards):
     """Get path to a sample's read1 fastq file"""
