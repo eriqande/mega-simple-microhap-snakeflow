@@ -1,11 +1,10 @@
 ---
 title: "mega-simple-microhap-snakeflow"
 output: 
-  html_document:
-    toc: true
   github_document:
     toc: true
-
+  html_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}

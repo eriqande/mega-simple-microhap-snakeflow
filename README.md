@@ -5,6 +5,9 @@ mega-simple-microhap-snakeflow
       - [samples.csv and units.csv](#samples.csv-and-units.csv)
       - [The config file](#the-config-file)
   - [Notes on Development](#notes-on-development)
+      - [Some python that is good to
+        know](#some-python-that-is-good-to-know)
+          - [Flattening lists](#flattening-lists)
       - [Testing python snippets](#testing-python-snippets)
           - [Interpreter access to `config`
             variable](#interpreter-access-to-config-variable)
@@ -19,8 +22,8 @@ mega-simple-microhap-snakeflow
           - [Remember to use Unix file iteration/alternation to specify
             requested output
             files](#remember-to-use-unix-file-iterationalternation-to-specify-requested-output-files)
+      - [Handling units and samples](#handling-units-and-samples)
   - [Genomes and target\_fastas](#genomes-and-target_fastas)
-  - [Old stuff](#old-stuff)
 
 This repository holds the Snakefile and associated files for Eric’s
 first attempt (still under construction\!) at making a SnakeMake-based
@@ -135,7 +138,7 @@ species: Chinook
 
 run_dir: .test/data
 
-# the following are names of files that assumed to be
+# the following are names of files that are assumed to be
 # within the run_dir
 samples: samples.csv
 units: units.csv
@@ -145,11 +148,16 @@ units: units.csv
 # where name_of_genome is like Otsh_v1.0
 genomes:
   Otsh_v1.0:
-    url: put_here_the_download_url
+    url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/872/995/GCF_002872995.1_Otsh_v1.0/GCF_002872995.1_Otsh_v1.0_genomic.fna.gz
   nookie2:
     url: this_would_need_a_download_url_too
 
 
+
+# NOTE: I should be able to replace the next 4 lines of code
+# by simply cycling over config["marker_sets"] and making
+# lists of the marker_sets that have a "genome" and those
+# that have a "target_fasta".  But for now I leave it in here.
 # The name element must be specified as a list here!
 genome_focused_marker_sets:
   name: ["LFAR", "WRAP", "ROSA"]
@@ -197,6 +205,30 @@ marker_sets:
 ```
 
 # Notes on Development
+
+## Some python that is good to know
+
+### Flattening lists
+
+Since the `+` operator catenates elements of lists together:
+
+``` python
+>>> a = [1]; b = [2]; a + b
+[1, 2]
+```
+
+You can also use sum to flatten lists:
+
+``` python
+>>> lumpy = [[1, 2, 3], [8, 9, 10], [4], [5]]
+>>> lumpy
+[[1, 2, 3], [8, 9, 10], [4], [5]]
+
+# the second argument here is the starting list to start catenating to.
+# So we pass it an empty list...
+>>> sum(lumpy, [])
+[1, 2, 3, 8, 9, 10, 4, 5]
+```
 
 ## Testing python snippets
 
@@ -268,10 +300,78 @@ region_files_from_marker_set_and_genome(wildcards)
 # which is just what we want it to be.
 ```
 
+Note that if you want to see what all the current values are in the
+wildcards object that you have defined for testing, you can do that
+with:
+
+``` python
+ wildcards.__dict__
+```
+
+which will produce output like:
+
+    {'marker_set': 'TRANSITION', 'genome': 'Otsh_v1.0', 'target_fasta': 'transition-panel', 'run_dir': '.test/data'}
+
+#### Using values that caused things to fail
+
+Sometimes you get a message like this when there is a failure:
+
+``` sh
+InputFunctionException in line 24 of /Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/workflow/rules/full_genome_map_and_extract.smk:
+Error:
+  KeyError: 'nookie2'
+Wildcards:
+  run_dir=.test/data
+  marker_set=ROSA
+  genome=nookie2
+  sample=CH_002
+Traceback:
+  File "/Users/eriq/Documents/git-repos/mega-simple-microhap-snakeflow/workflow/rules/common.smk", line 40, in region_files_from_marker_set_and_genome
+```
+
+It would be nice to set a local wildcards variable to have those values.
+Here is a script that does that, if you first copy out these lines and
+have them in your clipboard:
+
+``` 
+  run_dir=.test/data
+  marker_set=ROSA
+  genome=nookie2
+  sample=CH_002
+```
+
+Then run this script:
+
+``` sh
+# if the error values of snakemake wildcards are on your clipboard like this:
+#
+#  run_dir=.test/data
+#  marker_set=ROSA
+#  genome=nookie2
+#  sample=CH_002
+#
+# Then, run this script and it will put the python code to assign such
+# values to a local wildcards variable onto your clipboard
+
+pbpaste | sed 's/^ *//g; s/ *$//g;' |  awk -F"=" '{printf("wildcards.%s = \"%s\";\n", $1,$2)}' | pbcopy
+```
+
+i.e., put that into a script called `wilcard_em.sh` in your PATH, and
+then invoke it and your clipboard will then have:
+
+``` python
+wildcards.run_dir = ".test/data";
+wildcards.marker_set = "ROSA";
+wildcards.genome = "nookie2";
+wildcards.sample = "CH_002";
+```
+
+which you can paste into python for testing.
+
 ## Getting filepaths and wildcards right
 
 Just understanding the wildcarding framework of snakemake can take a
-while to get your head around. This microhap workflow is pretty beastly
+while to get your head around. This microha workflow is pretty beastly
 because there are many different options (genomes, target\_fastas,
 regions, etc.) One cool thing to realize was that all those different,
 possible, analysis pathways could be handled by using wildcards. And
@@ -345,12 +445,80 @@ snakemake -np \
     .test/data/bams/target_fastas/ROSA/{rosa_seqs_1,rosa_seqs_2}/CH_00{1..8}.bam \
     .test/data/bams/target_fastas/TRANSITION/transition-panel/CH_00{1..8}.bam \
     resources/bedfiles/fullg/{LFAR,WRAP,ROSA}-Otsh_v1.0.bed  \
-    resources/thinned_genomes/Otsh_v1.0/{LFAR,WRAP,ROSA}/thinned.fa
+    resources/thinned_genomes/Otsh_v1.0/{LFAR,WRAP,ROSA}/thinned.fa \
+    .test/data/bams/fullg-extracted/{LFAR,WRAP,ROSA}/Otsh_v1.0/CH_00{1..8}.bam \
+    .test/data/bams/fullg-extracted/LFAR/nookie2/CH_00{1..8}.bam
 ```
 
-This is good for testing your grammar in those early steps without
+This is good for testing your grammar/logic in those early steps without
 having to specifically deal with the aggregation that might come later
 (i.e., the VCF-making step).
+
+The above block was great for seeing if all my bam creation and
+extraction steps were solid.
+
+Now, to see if my rules that involve expanding over units to create the
+vcfs are working, I might try this:
+
+``` sh
+snakemake -np \
+    .test/data/vcfs/LFAR/fullg/{Otsh_v1.0,nookie2}/variants-bcftools.vcf
+```
+
+## Handling units and samples
+
+I could get whatever I need from these in a couple lines in R, but
+snakemake is done in python, so, I need to figure that out. I am sure
+there are muliple ways to do all these things, I am just going to find
+one that works.
+
+I decided it would be easiest to break units into two pandas data
+frames: one for the Markers that had target fastas, and another for the
+Markers that were genome-focused.
+
+``` python
+# code like this goes into common.smk
+tf_units = units[tflist == True]
+tflist = units["Markers"].isin(config["target_fasta_focused_marker_sets"]["name"])
+```
+
+I need to cycle over the rows in units, and for each one return a path
+for combination of:
+
+  - sample
+  - marker\_set
+  - genome of marker\_set (if any)
+  - target\_fasta of marker set (if any)
+
+Note that for testing things in a python session, it might be useful to
+do:
+
+``` python
+from snakemake.io import expand
+```
+
+Then we should be able to iterate over the rows in units like this:
+
+``` python
+for index, row in tf_units.iterrows():
+  print(row['Sample_ID'], row['Markers'])
+
+for index, row in gf_units.iterrows():
+  print(row['Sample_ID'], row['Markers'])
+
+```
+
+So, we just have to figure out how to expand those over the possible
+genomes and target fastas…
+
+``` python
+ret = list()
+for index, row in tf_units.iterrows():
+  S = row['Sample_ID']
+  M = row['Markers']
+  ret = ret + expand("{M}--{k}--{S}", M = M, S = S, k =  [str(k) for k in config["marker_sets"][M]["target_fasta"].keys()] )
+
+```
 
 # Genomes and target\_fastas
 
@@ -366,42 +534,4 @@ touch resources/genomes/Otsh_v1.0/Otsh_v1.0.fna
 
 mkdir -p config/target_fastas
 touch config/target_fastas/transition-panel.fna
-```
-
-# Old stuff
-
-To use it, place the flashed fastqs in the `data/samples` directory.
-(Note\! We will put the flashing step in here too, soon\!). Then list
-the names of the samples and the paths to those fastqs in the
-`config.yaml` file like you see for the simple 5 fastq case:
-
-``` yaml
-samples:
-  CHLFAR1: data/fastq/CHLFAR1.extendedFrags.fastq.gz
-  CHLFAR2: data/fastq/CHLFAR2.extendedFrags.fastq.gz
-  CHLFAR3: data/fastq/CHLFAR3.extendedFrags.fastq.gz
-  CHLFAR4: data/fastq/CHLFAR4.extendedFrags.fastq.gz
-  CHLFAR5: data/fastq/CHLFAR5.extendedFrags.fastq.gz
-```
-
-And give the path to the genome (assumed to be indexed by bwa-mem
-already…, but we could incorporate that too…) there as well, like:
-
-``` yaml
-genome: genome/Otsh_v1.0_genomic.fna
-```
-
-And finally, list the genomic coordinates of the target microhaplotypes
-in the full genome:
-
-``` yaml
-regions:
-  "NC_037130.1:1847885-1848185":
-  "NC_037130.1:1062935-1063235":
-  "NC_037130.1:786919-787219":
-  "NC_037130.1:929833-930133":
-  "NC_037130.1:536847-537147":
-  "NC_037130.1:1845977-1846277":
-  "NC_037130.1:828619-828919":
-  "NC_037130.1:864908-865208":
 ```
