@@ -115,6 +115,18 @@ For someone like me who is not super familiar with python, it
 is nice to be able to test various constructions in the python
 interpreter.  Here are some fun tricks to allows that to happen.
 
+
+### Unpacking dictionary keys and values
+
+If you have several genomes, for example, in your config:
+```python
+[*config["genome].keys()]
+```
+The `*` "unpacks" the `odict_keys` object into the enclosing list environment.
+
+Note that you might also use `list(config["genome"].keys())`.
+
+
 ### Interpreter access to `config` variable
 
 In order to have access to variables like the
