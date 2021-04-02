@@ -13,8 +13,7 @@ units: units.csv
 genomes:
   Otsh_v1.0:
     url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/872/995/GCF_002872995.1_Otsh_v1.0/GCF_002872995.1_Otsh_v1.0_genomic.fna.gz
-  nookie2:
-    url: this_would_need_a_download_url_too
+
 
 
 
@@ -24,11 +23,11 @@ genomes:
 # that have a "target_fasta".  But for now I leave it in here.
 # The name element must be specified as a list here!
 genome_focused_marker_sets:
-  name: ["LFAR", "WRAP", "ROSA"]
+  name: ["LFAR", "WRAP"]
 
 # The name element must be specified as a list here!
 target_fasta_focused_marker_sets:
-  name: ["TRANSITION", "ROSA"]
+  name: ["TRANSITION", "SNPS84", ROSA"]
 
 
 # here we give details about our marker sets.  Note that a marker
@@ -57,32 +56,30 @@ marker_sets:
       Otsh_v1.0:
         regions: config/regions/LFAR-Otsh_v1.0.txt
         variants:
-          snps_only: config/canonical_variants/LFAR-Otsh_v1-snps-only.vcf
-          everything: config/canonical_variants/LFAR-Otsh_v1-everything.vcf
-      nookie2:
-        regions: config/regions/LFAR-nookie2.txt
+          snps_only: config/canonical_variants/bogus_just_here_to_show_where_canonicals_would_go.vcf
   WRAP:
     genome:
       Otsh_v1.0:
         regions: config/regions/WRAP-Otsh_v1.0.txt
   ROSA:
-    genome:
-      Otsh_v1.0:
-        regions: config/regions/ROSA-Otsh_v1.0.txt
     target_fasta:
       fasta:
-        rosa_seqs_1: config/target_fastas/rosa-seqs-1-example.fasta
-        rosa_seqs_2: config/target_fastas/rosa-seqs-2-example.fasta
+        rosawr: config/target_fastas/greb1_rosa_with_wrdiag_reference.fasta
       variants:
-        snps_only: config/canonical_variants/Chinooks_RoSA_snps_only.vcf
-        snplicons: config/canonical_variants/Chinooks_RoSA_all_variants.vcf
+        single_snps: config/canonical_variants/bogus_rosa.vcf
   TRANSITION:
     target_fasta:
       fasta:
-        transition-panel: config/target_fastas/transition-panel.fna
+        transition_204: config/target_fastas/chinook_204amps_transition.fasta
       variants:
-        snps_only: config/canonical_variants/Chinooks_transition_snps_only.vcf
-        snplicons: config/canonical_variants/Chinooks_transitions_all_variants.vcf
+        snplicons: config/canonical_variation/chinook_204amps_ultima4_transition_multi_targets.vcf
+  SNPS84:
+    target_fasta:
+      fasta:
+        snps84: config/target_fastas/chinook_84amps.fasta
+      variants:
+        single_snps: config/canonical_variation/chinook_84amps_single_targets.vcf
+
 
 
 
