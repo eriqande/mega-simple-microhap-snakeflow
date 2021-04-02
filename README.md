@@ -9,6 +9,8 @@ mega-simple-microhap-snakeflow
         know](#some-python-that-is-good-to-know)
           - [Flattening lists](#flattening-lists)
       - [Testing python snippets](#testing-python-snippets)
+          - [Unpacking dictionary keys and
+            values](#unpacking-dictionary-keys-and-values)
           - [Interpreter access to `config`
             variable](#interpreter-access-to-config-variable)
           - [Interactive python-session testing of input
@@ -181,11 +183,20 @@ target_fasta_focused_marker_sets:
 
 # And we can map a marker set to more than one full genome...as the
 # LFAR example with a genome called "nookie2" shows.
+
+# But, also note that we can have multiple variant sets for each genome
+# within a genome-focused marker set.
+
+# The "variants" field is reserved only for the canonical SNP-sets that we would
+# use to call specific variants.  Not for finding new variants, etc.
 marker_sets:
   LFAR:
     genome:
       Otsh_v1.0:
         regions: config/regions/LFAR-Otsh_v1.0.txt
+        variants:
+          snps_only: config/canonical_variants/LFAR-Otsh_v1-snps-only.vcf
+          everything: config/canonical_variants/LFAR-Otsh_v1-everything.vcf
       nookie2:
         regions: config/regions/LFAR-nookie2.txt
   WRAP:
@@ -197,11 +208,29 @@ marker_sets:
       Otsh_v1.0:
         regions: config/regions/ROSA-Otsh_v1.0.txt
     target_fasta:
-      rosa_seqs_1: config/target_fastas/rosa-seqs-1-example.fasta
-      rosa_seqs_2: config/target_fastas/rosa-seqs-2-example.fasta
+      fasta:
+        rosa_seqs_1: config/target_fastas/rosa-seqs-1-example.fasta
+        rosa_seqs_2: config/target_fastas/rosa-seqs-2-example.fasta
+      variants:
+        snps_only: config/canonical_variants/Chinooks_RoSA_snps_only.vcf
+        snplicons: config/canonical_variants/Chinooks_RoSA_all_variants.vcf
   TRANSITION:
     target_fasta:
-      transition-panel: config/target_fastas/transition-panel.fna
+      fasta:
+        transition-panel: config/target_fastas/transition-panel.fna
+      variants:
+        snps_only: config/canonical_variants/Chinooks_transition_snps_only.vcf
+        snplicons: config/canonical_variants/Chinooks_transitions_all_variants.vcf
+
+
+
+
+
+
+
+
+
+
 ```
 
 # Notes on Development
@@ -235,6 +264,19 @@ You can also use sum to flatten lists:
 For someone like me who is not super familiar with python, it is nice to
 be able to test various constructions in the python interpreter. Here
 are some fun tricks to allows that to happen.
+
+### Unpacking dictionary keys and values
+
+If you have several genomes, for example, in your config:
+
+``` python
+[*config["genome].keys()]
+```
+
+The `*` “unpacks” the `odict_keys` object into the enclosing list
+environment.
+
+Note that you might also use `list(config["genome"].keys())`.
 
 ### Interpreter access to `config` variable
 

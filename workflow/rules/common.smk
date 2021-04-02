@@ -25,7 +25,8 @@ units = pd.read_csv(units_file, dtype={"Sample_ID": str, "Markers": str}).set_in
 validate(units, schema="../schemas/units.schema.yaml")
 
 #### Filter units into two versions: genome-focused and target-fasta-focused
-
+#  eventually I should be able to pull these different sets from the marker_sets
+# tree in config, but until then I use the pre-made lists in the config
 gflist = units["Markers"].isin(config["genome_focused_marker_sets"]["name"])
 tflist = units["Markers"].isin(config["target_fasta_focused_marker_sets"]["name"])
 
@@ -68,7 +69,7 @@ def fq2_from_sample_and_run(wildcards):
 
 def fna_from_marker_set_and_target_fasta(wildcards):
     """get path to a target fasta"""
-    return config["marker_sets"][wildcards.marker_set]["target_fasta"][wildcards.target_fasta]
+    return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
 
 
 def fullg_bam_inputs_for_calling_from_marker_set_and_genome(wildcards):
@@ -109,7 +110,11 @@ def target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards):
 
 # from unit.csv (now available in gf_units and tf_units) get all the different
 # vcf outputs that we should be expecting.  This means cycling over all the
-# different genomes and target_fastas in config, as well.
+# different genomes and target_fasta seqs in config, as well.
+# BIG NOTE: This is explicitly for creating VCFs from the bams.  These VCFs will
+# then be available to merge and define new "canonical" variation. But they
+# are not directly used to feed into the microhaplot or SNP-yanking sections
+# of the workflow.
 def requested_vcfs_from_units_and_config():
     """get list of vcf outputs we expect from the units and the config file"""
     # start with the genome-focused ones
@@ -123,11 +128,11 @@ def requested_vcfs_from_units_and_config():
         gf = gf + expand("{rd}/vcfs/{ms}/fullg/{g}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, g = g)
     # then do the target-fasta focused ones
     MS = list(set(list(tf_units["Markers"])))
-    # now, expand each of those by the genomes they might be associated with
+    # now, expand each of those by the specific target-fasta seqs they might be associated with
     tf = list()
     for m in MS:
-        # list of full genomes they are associated with
-        t = [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]
+        # list of target-fasta fastas they are associated with
+        t = [str(k) for k in config["marker_sets"][m]["target_fasta"]["fasta"].keys()]
         tf = tf + expand("{rd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, t = t)
     return gf + tf
 
