@@ -25,6 +25,6 @@ rule bwt_index_genome:
   conda:
     "../envs/bwa.yaml"
   output:
-    bwt="resources/genomes/{genome}/{genome}.fna.bwt"
+    multiext("resources/genomes/{genome}/{genome}.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
   shell:
-    "echo bwa index {input.fna} > {output.bwt} 2> {log}"
+    "echo bwa index {input.fna}  2> {log}; touch {output}"

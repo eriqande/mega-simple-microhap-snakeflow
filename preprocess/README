@@ -1,0 +1,5 @@
+
+
+# This directory contains some R scripts that hold
+# function definitions that are useful for processing
+# the SampleSheet.csv into samples.csv and units.csv
