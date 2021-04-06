@@ -3,4 +3,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - flash2 == 2.2.00
+  - flash == 1.2.11
