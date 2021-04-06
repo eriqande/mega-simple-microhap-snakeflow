@@ -18,7 +18,7 @@ rule map_to_full_genome:
     bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",
     bai="{run_dir}/bams/fullg/{genome}/{sample}.bam.bai"
   shell:
-    "echo bwa mem -R {params.rg} {input.g} {input.EF} 2> {log.bwa} | "
+    "echo bwa mem -R '{params.rg}' {input.g} {input.EF} 2> {log.bwa} | "
     " samtools view -u - 2> {log.samtools} | samtools sort - >  {output.bam} 2>> {log.samtools} "
     " samtools index {output.bam} 2>> {log.samtools}"
 
