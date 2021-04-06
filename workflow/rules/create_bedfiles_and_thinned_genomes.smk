@@ -34,8 +34,8 @@ rule make_thinned_genomes:
   conda:
     "../envs/bwasam.yaml"
   output:
-    idx_files=multiext("resources/thinned_genomes/{genome}/{marker_set}/thinned.fa", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa"),
-    fa="resources/thinned_genomes/{genome}/{marker_set}/thinned.fa"
+    idx_files=multiext("resources/thinned_genomes/{genome}/{marker_set}/thinned.fna", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+    fa="resources/thinned_genomes/{genome}/{marker_set}/thinned.fna"
   shell:
     "samtools faidx {input.fa} $(cat {input.regfile}) > {output.fa} 2> {log.faidx}; "
     "bwa index {output.fa} 2> {log.bwaidx}"
