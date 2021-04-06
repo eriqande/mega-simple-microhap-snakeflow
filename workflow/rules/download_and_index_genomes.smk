@@ -46,7 +46,7 @@ rule bwt_index_genome:
 # we also need to bwa index the target fastas
 rule bwt_index_target_fasta:
   input:
-    fna=fna_from_target_fasta
+    fna=fna_from_marker_set_and_target_fasta
   log:
     "resources/logs/bwt_index_target_fasta/{marker_set}/{target_fasta}.log"
   conda:

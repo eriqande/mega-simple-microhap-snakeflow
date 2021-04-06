@@ -48,14 +48,9 @@ def fna_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
 
-def fna_from_target_fasta(wildcards):
-    """Get path to genome fasta from a given genome"""
-    return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
-
 def fai_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna.fai".format(genome=wildcards.genome)
-
 
 def fna_bwt_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
@@ -78,16 +73,14 @@ def fq2_from_sample_and_run(wildcards):
 def rg_from_sample(wildcards):
     """get the read group to put in a sample's BAM file"""
     # key thing here is the set ID to {sample} and SM to NMFS_DNA_ID
-    return r"@RG\tID:{sample}\tSM:{nmfs}".format(
+    return r"@RG\tID:{sample}\tSM:{nmfs}\tPL:ILLUMINA".format(
         sample = wildcards.sample,
         nmfs = samples.loc[wildcards.sample, "NMFS_DNA_ID"]
     )
 
-
 def fna_from_marker_set_and_target_fasta(wildcards):
     """get path to a target fasta"""
     return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
-
 
 def fullg_bam_inputs_for_calling_from_marker_set_and_genome(wildcards):
     """get list of input bams for every sample for a given marker_set and genome"""
