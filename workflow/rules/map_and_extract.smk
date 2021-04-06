@@ -52,7 +52,7 @@ rule extract_reads_from_full_genomes:
 #### THIS SECTION IS MAPPING TO TARGET FASTAS WITH NO EXTRACTING NECESSARY ####
 
 
-# map reads to the requested full genome
+# map reads to the requested target_fastas
 rule map_to_target_fastas:
   input:
     g="resources/target_fastas/{marker_set}/{target_fasta}/ref.fna",
@@ -71,5 +71,30 @@ rule map_to_target_fastas:
     "bwa mem -R '{params.rg}' {input.g} {input.EF}  2> {log.bwa} | "
     " samtools view -u -  2> {log.samtools} |  "
     " samtools sort -T {wildcards.run_dir}/bams/target_fastas/{wildcards.marker_set}/{wildcards.target_fasta}/{wildcards.sample} "
+    "   -O bam -o {output.bam} - 2>> {log.samtools}; "
+    " samtools index {output.bam} 2>> {log.samtools}"
+
+
+#### THIS SECTION IS MAPPING TO THINNED GENOMES
+
+# map reads to the requested thinned genomes
+rule map_to_thinned_genomes:
+  input:
+    g="resources/thinned_genomes/{genome}/{marker_set}/thinned.fna",
+    EF="{run_dir}/flash/{sample}.extendedFrags.fastq.gz"
+  params:
+    rg=rg_from_sample
+  log:
+    bwa="{run_dir}/logs/map_to_thinned_genomes/{genome}/{marker_set}/{sample}.bwa.log",
+    samtools="{run_dir}/logs/map_to_thinned_genomes/{genome}/{marker_set}/{sample}.samtools.log"
+  conda:
+    "../envs/bwasam.yaml"
+  output:
+    bam="{run_dir}/bams/thinned_genomes/{genome}/{marker_set}/{sample}.bam",
+    bai="{run_dir}/bams/thinned_genomes/{genome}/{marker_set}/{sample}.bam.bai"
+  shell:
+    "bwa mem -R '{params.rg}' {input.g} {input.EF}  2> {log.bwa} | "
+    " samtools view -u -  2> {log.samtools} |  "
+    " samtools sort -T {wildcards.run_dir}/bams/thinned_genomes/{wildcards.genome}/{wildcards.marker_set}/{wildcards.sample} "
     "   -O bam -o {output.bam} - 2>> {log.samtools}; "
     " samtools index {output.bam} 2>> {log.samtools}"
