@@ -16,6 +16,18 @@ rule download_genome:
     "wget -O {output.fna}.gz {params.url} 2> {log.wget}; "
     " gunzip {output.fna}.gz  2> {log.gunzip}"
 
+rule faidx_genome:
+  input:
+    fna=fna_from_genome
+  log:
+    "resources/logs/faidx_genome/{genome}.log"
+  conda:
+    "../envs/samtools.yaml"
+  output:
+    "resources/genomes/{genome}/{genome}.fna.fai"
+  shell:
+    "samtools faidx {input.fna} 2> {log}"
+
 
 rule bwt_index_genome:
   input:

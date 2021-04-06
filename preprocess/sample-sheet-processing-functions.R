@@ -10,6 +10,65 @@ create_samples_and_units <- function(path) {
   lines <- read_lines(path, n_max = 100)
   skip <- min(which(str_detect(lines, "^\\[Data\\]")))
 
-  S <- read_csv(path, skip = skip)
+  # first make and retain only the columns we will need going forward
+  S <- read_csv(path, skip = skip) %>%
+    mutate(
+      NMFS_DNA_ID = str_split_fixed(Sample_Plate, "_", n = 3)[,1],
+      sample = str_c("s", sprintf("%04d", 1:n()))
+    ) %>%
+    rename(
+      Marker_Sets = Description
+    ) %>%
+    select(sample, Marker_Sets, NMFS_DNA_ID, Sample_ID, Sample_Name)
 
+
+  # now, look in the raw directory to get the fastq paths
+  rawdir <- file.path(dirname(path), "raw")
+  rawfiles <- dir(rawdir)
+  r1 <- rawfiles[str_detect(rawfiles, "_L00[0-9]_R1_00[0-9]\\.fastq.gz")]
+  r2 <- rawfiles[str_detect(rawfiles, "_L00[0-9]_R2_00[0-9]\\.fastq.gz")]
+  r1tib <- tibble(file = r1) %>%
+    mutate(
+      Sample_Name = str_split_fixed(file, "_", n = 2)[,1],
+      fq1 = file
+    ) %>%
+    select(-file)
+  r2tib <- tibble(file = r2) %>%
+    mutate(
+      Sample_Name = str_split_fixed(file, "_", n = 2)[,1],
+      fq2 = file
+    ) %>%
+    select(-file)
+
+  samples <- S %>%
+    left_join(r1tib, by = "Sample_Name") %>%
+    left_join(r2tib, by = "Sample_Name")
+
+  #### some light error checking ####
+  missers <- samples %>%
+    filter(is.na(fq1) | is.na(fq2))
+
+  if(nrow(missers) > 0) {
+    miss_str <- paste(missers$Sample_ID, collapse = ", ")
+    stop("FASTQs not found for: ", miss_str)
+  }
+
+  both <- c(samples$fq1, samples$fq2)
+  dupies <- both[duplicated(both)]
+  if(length(dupies) < 0) {
+    dup_str <- paste(dupies, collapse = ", ")
+    stop("Bad News! FASTQ paths appearing more than once: ", dup_str)
+  }
+
+
+  #### Now, make units  ####
+  units <- samples %>%
+    mutate(Markers = str_split(Marker_Sets, "\\s*,\\s*")) %>%
+    unnest(cols = Markers) %>%
+    select(-Marker_Sets) %>%
+    select(sample, Markers)
+
+  #### Finally, write out samples and units ####
+  write_csv(samples, file = file.path(dirname(path), "samples.csv"))
+  write_csv(units, file = file.path(dirname(path), "units.csv"))
 }

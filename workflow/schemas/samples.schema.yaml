@@ -2,18 +2,21 @@ $schema: "http://json-schema.org/draft-04/schema#"
 description: row of the samples.csv file that includes sample name, NMFS_ID_PLATE, fastq location, etc.
 type: object
 properties:
-  Sample_ID:
+  sample:
     type: string
-    description: sample name/id specific to the particular GT-seq run
-  NMFS_DNA_ID:
-    type: string
-    description: the NMFS_DNA_ID
-  Plate:
-    type: string
-    description: the plate ID of this sample
+    description: sample name to be used in file names for this workflow
   Marker_Sets:
     type: string
     description: the comma-separated  list of microhaplotype marker sets the sample was amplified and sequenced for
+  NMFS_DNA_ID:
+    type: string
+    description: the NMFS_DNA_ID
+  Sample_ID:
+    type: string
+    description: sample name/id specific to the particular GT-seq run
+  Sample_Name:
+    type: string
+    description: name that is part of the fastq filename prefix  
   fq1:
     type: string
     description: path to the read-1 fastq file.
@@ -22,9 +25,10 @@ properties:
     description: path to the read-1 fastq file.
 
 required:
-  - Sample_ID
-  - NMFS_DNA_ID
-  - Plate
+  - sample
   - Marker_Sets
+  - NMFS_DNA_ID
+  - Sample_ID
+  - Sample_Name
   - fq1
   - fq2

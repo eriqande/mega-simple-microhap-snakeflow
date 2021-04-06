@@ -12,7 +12,7 @@ samples_file = r"{run_dir}/{sample_file}".format(
     sample_file = config["samples"]
     )
 # read and validate
-samples = pd.read_csv(samples_file).set_index("Sample_ID", drop=False)
+samples = pd.read_csv(samples_file).set_index("sample", drop=False)
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 
@@ -21,7 +21,7 @@ units_file = r"{run_dir}/{units_file}".format(
     run_dir=config["run_dir"],
     units_file = config["units"]
     )
-units = pd.read_csv(units_file, dtype={"Sample_ID": str, "Markers": str}).set_index(["Sample_ID", "Markers"], drop=False).sort_index()
+units = pd.read_csv(units_file, dtype={"sample": str, "Markers": str}).set_index(["sample", "Markers"], drop=False).sort_index()
 validate(units, schema="../schemas/units.schema.yaml")
 
 #### Filter units into two versions: genome-focused and target-fasta-focused
@@ -47,6 +47,11 @@ def region_files_from_marker_set_and_genome(wildcards):
 def fna_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
+
+def fai_from_genome(wildcards):
+    """Get path to genome fasta from a given genome"""
+    return r"resources/genomes/{genome}/{genome}.fna.fai".format(genome=wildcards.genome)
+
 
 def fna_bwt_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
@@ -79,7 +84,7 @@ def fullg_bam_inputs_for_calling_from_marker_set_and_genome(wildcards):
     # then cycle over those rows and make a list of paths
     ret = list()
     for index, row in DF.iterrows():
-        S = row['Sample_ID']
+        S = row['sample']
         ret = ret + [r"{R}/bams/fullg-extracted/{M}/{G}/{S}.bam".format(
         R = wildcards.run_dir,
         M = wildcards.marker_set,
@@ -95,7 +100,7 @@ def target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards):
     # then cycle over those rows and make a list of paths
     ret = list()
     for index, row in DF.iterrows():
-        S = row['Sample_ID']
+        S = row['sample']
         ret = ret + [r"{R}/bams/target_fastas/{M}/{T}/{S}.bam".format(
         R = wildcards.run_dir,
         M = wildcards.marker_set,
