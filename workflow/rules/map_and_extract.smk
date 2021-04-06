@@ -20,7 +20,8 @@ rule map_to_full_genome:
   shell:
     " bwa mem -R '{params.rg}' {input.g} {input.EF} 2> {log.bwa} | "
     " samtools view -u -  2> {log.samtools} |  "
-    " samtools sort -o {output.bam} - 2>> {log.samtools}; "
+    " samtools sort -T {wildcards.run_dir}/bams/fullg/{wildcards.genome}/{wildcards.sample} "
+    "   -O bam -o {output.bam} - 2>> {log.samtools}; "
     " samtools index {output.bam} 2>> {log.samtools}"
 
 
@@ -40,9 +41,10 @@ rule extract_reads_from_full_genomes:
     bam="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
     bai="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai"
   shell:
-    "echo samtools view -u {input.bam} $(cat {input.regfile}) > {output.bam} 2> {log}; touch {output.bai} "
-#   "samtools sort -T extracted_reads/{wildcards.sample} -O bam - > {output.bam}; "
-#   "samtools index {output.bam}"
+    " samtools view -u {input.bam} $(cat {input.regfile})  2> {log} |  "
+    " samtools sort -T {wildcards.run_dir}/bams/fullg-extracted/{wildcards.marker_set}/{wildcards.genome}/{wildcards.sample} "
+    "   -O bam -o {output.bam} -  2>> {log}; "
+    " samtools index {output.bam}; "
 
 
 

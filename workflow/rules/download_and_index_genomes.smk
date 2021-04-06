@@ -40,3 +40,22 @@ rule bwt_index_genome:
     multiext("resources/genomes/{genome}/{genome}.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
   shell:
     "bwa index {input.fna}  2> {log} "
+
+
+
+# we also need to bwa index the target fastas
+rule bwt_index_target_fasta:
+  input:
+    fna=fna_from_target_fasta
+  log:
+    "resources/logs/bwt_index_target_fasta/{marker_set}/{target_fasta}.log"
+  conda:
+    "../envs/bwa.yaml"
+  output:
+    fna="resources/target_fastas/{marker_set}/{target_fasta}.fna",
+    exts=multiext("resources/target_fastas/{marker_set}/{target_fasta}.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
+  shell:
+    " cp {input.fna} {output.fna}; "
+    " bwa index {output.fna}  2> {log} "
+
+

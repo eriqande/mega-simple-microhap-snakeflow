@@ -48,6 +48,10 @@ def fna_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
 
+def fna_from_target_fasta(wildcards):
+    """Get path to genome fasta from a given genome"""
+    return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
+
 def fai_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna.fai".format(genome=wildcards.genome)
