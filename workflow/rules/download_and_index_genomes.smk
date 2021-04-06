@@ -52,8 +52,8 @@ rule bwt_index_target_fasta:
   conda:
     "../envs/bwa.yaml"
   output:
-    fna="resources/target_fastas/{marker_set}/{target_fasta}.fna",
-    exts=multiext("resources/target_fastas/{marker_set}/{target_fasta}.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
+    fna="resources/target_fastas/{marker_set}/{target_fasta}/{target_fasta}.fna",
+    exts=multiext("resources/target_fastas/{marker_set}/{target_fasta}/{target_fasta}.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
   shell:
     " cp {input.fna} {output.fna}; "
     " bwa index {output.fna}  2> {log} "
