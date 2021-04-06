@@ -16,8 +16,8 @@ rule call_fullg_marker_sets_with_bcftools:
   output:
     vcf="{run_dir}/vcfs/{marker_set}/fullg/{genome}/variants-bcftools.vcf"
   shell:
-    "echo 'bcftools mpileup -f {input.fna} -R {input.bed} -a AD,DP,INFO/AD "
-    "-B  -q 20 -Q 20 {input.bams} 2> {log.mpileup} | bcftools call -v -m  2> {log.call} | bcftools sort ' > {output.vcf} 2> {log.sort}"
+    "bcftools mpileup -f {input.fna} -R {input.bed} -a AD,DP,INFO/AD "
+    "-B  -q 20 -Q 20 {input.bams} 2> {log.mpileup} | bcftools call -v -m  2> {log.call} | bcftools sort > {output.vcf} 2> {log.sort}"
 
 
 rule call_target_fasta_marker_sets_with_bcftools:
