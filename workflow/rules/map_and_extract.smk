@@ -16,10 +16,12 @@ rule map_to_full_genome:
     "../envs/bwasam.yaml"
   output:
     bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",
-    bai="{run_dir}/bams/fullg/{genome}/{sample}.bam.bai"
+    bai="{run_dir}/bams/fullg/{genome}/{sample}.bam.bai",
+    unsort=temp("{run_dir}/bams/fullg/{genome}/{sample}.unsorted.bam")
   shell:
     "echo bwa mem -R '{params.rg}' {input.g} {input.EF} 2> {log.bwa} | "
-    " samtools view -u - 2> {log.samtools} | samtools sort - >  {output.bam} 2>> {log.samtools}; "
+    " samtools view -u - 2> {log.samtools} > {output.unsort} "
+    " samtools sort -o {output.bam} {output.unsort} 2>> {log.samtools}; "
     " samtools index {output.bam} 2>> {log.samtools}"
 
 
