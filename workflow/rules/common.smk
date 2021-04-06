@@ -71,6 +71,14 @@ def fq2_from_sample_and_run(wildcards):
         fq=samples.loc[wildcards.sample, "fq2"]
     )
 
+def rg_from_sample(wildcards):
+    """get the read group to put in a sample's BAM file"""
+    # key thing here is the set ID to {sample} and SM to NMFS_DNA_ID
+    return r"@RG\tID:{sample}\tSM:{nmfs}".format(
+        sample = wildcards.sample,
+        nmfs = samples.loc[wildcards.sample, "NMFS_DNA_ID"]
+    )
+
 
 def fna_from_marker_set_and_target_fasta(wildcards):
     """get path to a target fasta"""

@@ -6,19 +6,21 @@ rule map_to_full_genome:
   input:
     g=fna_from_genome,
     bwt=fna_bwt_from_genome,
-    EF="{run_dir}/flash/{sample}-extendedFrags.fna.gz"
+    EF="{run_dir}/flash/{sample}.extendedFrags.fastq.gz"
   params:
-    rg=r"@RG\tID:{sample}\tSM:{sample}"
+    rg=rg_from_sample
   log:
-    "{run_dir}/logs/map_to_full_genome/{genome}/{sample}.log"
+    bwa="{run_dir}/logs/map_to_full_genome/{genome}/{sample}.bwa.log",
+    samtools="{run_dir}/logs/map_to_full_genome/{genome}/{sample}.samtools.log",
   conda:
     "../envs/bwasam.yaml"
   output:
     bam="{run_dir}/bams/fullg/{genome}/{sample}.bam",
     bai="{run_dir}/bams/fullg/{genome}/{sample}.bam.bai"
   shell:
-    "echo bwa mem -R {params.rg} {input.g} {input.EF} > {output.bam}; "
-    "touch {output.bai}"
+    "echo bwa mem -R {params.rg} {input.g} {input.EF} 2> {log.bwa} | "
+    " samtools view -u - 2> {log.samtools} | samtools sort - >  {output.bam} 2>> {log.samtools} "
+    " samtools index {output.bam} 2>> {log.samtools}"
 
 
 # extract the reads overlapping our target regions when mapped
