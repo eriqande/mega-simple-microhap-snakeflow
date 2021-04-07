@@ -25,11 +25,16 @@ units = pd.read_csv(units_file, dtype={"sample": str, "Markers": str}).set_index
 validate(units, schema="../schemas/units.schema.yaml")
 
 #### Filter units into two versions: genome-focused and target-fasta-focused
-#  eventually I should be able to pull these different sets from the marker_sets
-# tree in config, but until then I use the pre-made lists in the config
-gflist = units["Markers"].isin(config["genome_focused_marker_sets"]["name"])
-tflist = units["Markers"].isin(config["target_fasta_focused_marker_sets"]["name"])
+# first get all the markers into lists of genome-focused and target-fasta focused ones
+MS = list(config["marker_sets"].keys())
+tf_markers = [k for k in MS if "target_fasta" in config["marker_sets"][k]]
+gf_markers = [k for k in MS if "genome" in config["marker_sets"][k]]
 
+# figure out which rows in units correspond to each of those tf and gf things.
+gflist = units["Markers"].isin(gf_markers)
+tflist = units["Markers"].isin(tf_markers)
+
+# break units into genome-focused and target-fasta-focused ones
 gf_units = units[gflist == True]
 tf_units = units[tflist == True]
 
