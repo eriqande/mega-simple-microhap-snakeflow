@@ -27,7 +27,7 @@ genome_focused_marker_sets:
 
 # The name element must be specified as a list here!
 target_fasta_focused_marker_sets:
-  name: ["TRANSITION", "SNPS84", ROSA"]
+  name: ["TRANSITION", "SNPS84", "ROSA"]
 
 
 # here we give details about our marker sets.  Note that a marker
