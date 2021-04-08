@@ -86,8 +86,8 @@ rule map_to_target_fastas:
     " samtools sort -T {wildcards.run_dir}/bams/target_fastas/{wildcards.marker_set}/{wildcards.target_fasta}/{wildcards.sample} "
     "   -O bam -o {output.bam} - 2>> {log.samtools}; "
     " samtools index {output.bam} 2>> {log.samtools}; "
-    " samtools view {output.bam} > {output.sam} 2>> {log}; "
-    " samtools idxstats {output.bam} > {output.idx} 2>> {log}; "
+    " samtools view {output.bam} > {output.sam} 2>> {log.samtools}; "
+    " samtools idxstats {output.bam} > {output.idx} 2>> {log.samtools}; "
 
 
 #### THIS SECTION IS MAPPING TO THINNED GENOMES 
