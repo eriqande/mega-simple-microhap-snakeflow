@@ -4,7 +4,7 @@
 
 rule call_fullg_marker_sets_with_bcftools:
   input:
-    bams=fullg_bam_inputs_for_calling_from_marker_set_and_genome,
+    bams= lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "fullg", trunk = "bams", ext = ".bam"), #fullg_bam_inputs_for_calling_from_marker_set_and_genome,
     fna=fna_from_genome,
     bed="resources/bedfiles/fullg/{marker_set}-{genome}.bed"
   log:
@@ -22,7 +22,7 @@ rule call_fullg_marker_sets_with_bcftools:
 
 rule call_target_fasta_marker_sets_with_bcftools:
   input:
-    bams=target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta,
+    bams=  lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "target_fasta", trunk = "bams", ext = ".bam"), #target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta,
     fna=fna_from_marker_set_and_target_fasta
   log:
     mpileup="{run_dir}/logs/call_fullg_marker_sets_with_bcftools/bcftools_mpileup-{marker_set}-{target_fasta}.log",

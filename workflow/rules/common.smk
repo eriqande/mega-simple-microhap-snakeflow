@@ -87,36 +87,48 @@ def fna_from_marker_set_and_target_fasta(wildcards):
     """get path to a target fasta"""
     return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
 
-def fullg_bam_inputs_for_calling_from_marker_set_and_genome(wildcards):
-    """get list of input bams for every sample for a given marker_set and genome"""
-    # first, get the pandas data frame of samples for the particular marker set
-    DF = gf_units[gf_units["Markers"].isin([wildcards.marker_set])]
-    # then cycle over those rows and make a list of paths
-    ret = list()
-    for index, row in DF.iterrows():
-        S = row['sample']
-        ret = ret + [r"{R}/bams/fullg-extracted/{M}/{G}/{S}.bam".format(
-        R = wildcards.run_dir,
-        M = wildcards.marker_set,
-        G = wildcards.genome,
-        S = S)]
-    return ret
 
+# here is a more general version  that I can call
+# to also do idxstats, sams, and different extenstions with
+# it by calling it in a lambda function.
+# type is either fullg or target_fasta
+# trunk is whether it is bam, sam, or idxstats, etc.
+# ext is the extensions the file should have.  IT MUST INCLUDE THE PERIOD (i.e. ".bam", not "bam")
+def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
+    if(type == "fullg"):
+        # first, get the pandas data frame of samples for the particular marker set
+        DF = gf_units[gf_units["Markers"].isin([wildcards.marker_set])]
+        # then cycle over those rows and make a list of paths
+        ret = list()
+        for index, row in DF.iterrows():
+            S = row['sample']
+            ret = ret + [r"{R}/{TRUNK}/fullg-extracted/{M}/{G}/{S}{EXT}".format(
+            R = wildcards.run_dir,
+            TRUNK = trunk,
+            M = wildcards.marker_set,
+            G = wildcards.genome,
+            S = S,
+            EXT = ext)]
+        return ret
+    else:
+        if(type == "target_fasta"):
+            # first, get the pandas data frame of samples for the particular marker set
+            DF = tf_units[tf_units["Markers"].isin([wildcards.marker_set])]
+            # then cycle over those rows and make a list of paths
+            ret = list()
+            for index, row in DF.iterrows():
+                S = row['sample']
+                ret = ret + [r"{R}/{TRUNK}/target_fastas/{M}/{T}/{S}{EXT}".format(
+                R = wildcards.run_dir,
+                TRUNK = trunk,
+                M = wildcards.marker_set,
+                T = wildcards.target_fasta,
+                S = S,
+                EXT = ext)]
+            return ret
+        else:
+            raise ValueError("type must be fullg or target_fasta")
 
-def target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards):
-    """get list of input bams for every sample for a given marker_set and genome"""
-    # first, get the pandas data frame of samples for the particular marker set
-    DF = tf_units[tf_units["Markers"].isin([wildcards.marker_set])]
-    # then cycle over those rows and make a list of paths
-    ret = list()
-    for index, row in DF.iterrows():
-        S = row['sample']
-        ret = ret + [r"{R}/bams/target_fastas/{M}/{T}/{S}.bam".format(
-        R = wildcards.run_dir,
-        M = wildcards.marker_set,
-        T = wildcards.target_fasta,
-        S = S)]
-    return ret
 
 
 
