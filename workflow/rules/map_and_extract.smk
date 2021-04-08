@@ -46,7 +46,7 @@ rule extract_reads_from_full_genomes:
     "../envs/bwasam.yaml"
   output:
     bam="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
-    bai="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai"
+    bai="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai",
     sam="{run_dir}/sams/fullg-extracted/{marker_set}/{genome}/{sample}.sam",
     idx="{run_dir}/idxstats/fullg-extracted/{marker_set}/{genome}/{sample}_idxstats.txt",
   shell:
@@ -77,7 +77,7 @@ rule map_to_target_fastas:
     "../envs/bwasam.yaml"
   output:
     bam="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam",
-    bai="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam.bai"
+    bai="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam.bai",
     sam="{run_dir}/sams/target_fastas/{marker_set}/{target_fasta}/{sample}.sam",
     idx="{run_dir}/idxstats/target_fastas/{marker_set}/{target_fasta}/{sample}_idxstats.txt",
   shell:
