@@ -1,4 +1,11 @@
 
+# To be expedient, after making BAMs, we then, as part of the same
+# block, convert them to SAMs (for microhaplot) and also run idxstats
+# on them.  This is not super fine-grained the way a Snakemake workflow
+# would typically be, but it doesn't take much time for these other steps
+# and we are going to want them for microhaplot in almost all cases.
+
+
 #### THIS SECTION IS MAPPING TO FULL GENOMES, THEN EXTRACTING  ####
 
 # map reads to the requested full genome
@@ -40,11 +47,15 @@ rule extract_reads_from_full_genomes:
   output:
     bam="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
     bai="{run_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai"
+    sam="{run_dir}/sams/fullg-extracted/{marker_set}/{genome}/{sample}.sam",
+    idx="{run_dir}/idxstats/fullg-extracted/{marker_set}/{genome}/{sample}_idxstats.txt",
   shell:
     " samtools view -u {input.bam} $(cat {input.regfile})  2> {log} |  "
     " samtools sort -T {wildcards.run_dir}/bams/fullg-extracted/{wildcards.marker_set}/{wildcards.genome}/{wildcards.sample} "
     "   -O bam -o {output.bam} -  2>> {log}; "
     " samtools index {output.bam}; "
+    " samtools view {output.bam} > {output.sam} 2>> {log}; "
+    " samtools idxstats {output.bam} > {output.idx} 2>> {log}; "
 
 
 
@@ -67,15 +78,21 @@ rule map_to_target_fastas:
   output:
     bam="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam",
     bai="{run_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam.bai"
+    sam="{run_dir}/sams/target_fastas/{marker_set}/{target_fasta}/{sample}.sam",
+    idx="{run_dir}/idxstats/target_fastas/{marker_set}/{target_fasta}/{sample}_idxstats.txt",
   shell:
     "bwa mem -R '{params.rg}' {input.g} {input.EF}  2> {log.bwa} | "
     " samtools view -u -  2> {log.samtools} |  "
     " samtools sort -T {wildcards.run_dir}/bams/target_fastas/{wildcards.marker_set}/{wildcards.target_fasta}/{wildcards.sample} "
     "   -O bam -o {output.bam} - 2>> {log.samtools}; "
     " samtools index {output.bam} 2>> {log.samtools}"
+    " samtools view {output.bam} > {output.sam} 2>> {log}; "
+    " samtools idxstats {output.bam} > {output.idx} 2>> {log}; "
 
 
-#### THIS SECTION IS MAPPING TO THINNED GENOMES
+#### THIS SECTION IS MAPPING TO THINNED GENOMES 
+# this is mostly used to see how much extra stuff is being amplified that
+# is off-target.
 
 # map reads to the requested thinned genomes
 rule map_to_thinned_genomes:
