@@ -19,7 +19,7 @@ create_samples_and_units <- function(path) {
     rename(
       Marker_Sets = Description
     ) %>%
-    select(sample, Marker_Sets, NMFS_DNA_ID, Sample_ID, Sample_Name)
+    select(sample, Marker_Sets, NMFS_DNA_ID, Sample_ID, Sample_Name, Sample_Project)
 
 
   # now, look in the raw directory to get the fastq paths

@@ -16,7 +16,10 @@ properties:
     description: sample name/id specific to the particular GT-seq run
   Sample_Name:
     type: string
-    description: name that is part of the fastq filename prefix  
+    description: name that is part of the fastq filename prefix
+  Sample_Project:
+    type: string
+    description: description of the amplification run, etc. the samples are a part of  
   fq1:
     type: string
     description: path to the read-1 fastq file.
@@ -30,5 +33,6 @@ required:
   - NMFS_DNA_ID
   - Sample_ID
   - Sample_Name
+  - Sample_Project
   - fq1
   - fq2

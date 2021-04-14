@@ -53,6 +53,10 @@ def fna_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
 
+def thinned_fna_from_genome_and_marker_set(wildcards):
+    """Get path to genome fasta from a given genome"""
+    return r"resources/thinned_genomes/{genome}/{marker_set}/thinned.fna".format(genome=wildcards.genome, marker_set = wildcards.marker_set)
+
 def fai_from_genome(wildcards):
     """Get path to genome fasta from a given genome"""
     return r"resources/genomes/{genome}/{genome}.fna.fai".format(genome=wildcards.genome)
@@ -91,7 +95,7 @@ def fna_from_marker_set_and_target_fasta(wildcards):
 # here is a more general version  that I can call
 # to also do idxstats, sams, and different extenstions with
 # it by calling it in a lambda function.
-# type is either fullg or target_fasta
+# type is either fullg or target_fasta or fullgex_remapped
 # trunk is whether it is bam, sam, or idxstats, etc.
 # ext is the extensions the file should have.  IT MUST INCLUDE THE PERIOD (i.e. ".bam", not "bam")
 def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
@@ -127,7 +131,23 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
                 EXT = ext)]
             return ret
         else:
-            raise ValueError("type must be fullg or target_fasta")
+            if(type == "fullgex_remapped"):
+                # first, get the pandas data frame of samples for the particular marker set
+                DF = gf_units[gf_units["Markers"].isin([wildcards.marker_set])]
+                # then cycle over those rows and make a list of paths
+                ret = list()
+                for index, row in DF.iterrows():
+                    S = row['sample']
+                    ret = ret + [r"{R}/{TRUNK}/fullgex_remapped_to_thinned/{M}/{G}/{S}{EXT}".format(
+                    R = wildcards.run_dir,
+                    TRUNK = trunk,
+                    M = wildcards.marker_set,
+                    G = wildcards.genome,
+                    S = S,
+                    EXT = ext)]
+                return ret
+            else:
+                raise ValueError("type must be fullg or target_fasta")
 
 
 
@@ -161,7 +181,17 @@ def requested_vcfs_from_units_and_config():
         # list of target-fasta fastas they are associated with
         t = [str(k) for k in config["marker_sets"][m]["target_fasta"]["fasta"].keys()]
         tf = tf + expand("{rd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, t = t)
-    return gf + tf
+    # then, also do the genome-focused ones that have been extracted and remapped to the
+    # thinned genomes.    
+    MS = list(set(list(gf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    gfex = list()
+    for m in MS:
+        # list of full genomes they are associated with
+        g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
+        gfex = gfex + expand("{rd}/vcfs/{ms}/fullgex_remapped/{g}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, g = g)
+
+    return gf + gfex + tf
 
 
 

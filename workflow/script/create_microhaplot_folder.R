@@ -1,0 +1,36 @@
+
+
+# get the run_dir,  and then create a microhaplot directory
+# there with the Shiny elements in it.
+
+run_dir = snakemake@params$rd
+
+
+inst_packs <- rownames(installed.packages())
+if(!("remotes" %in% inst_packs)) {
+	message("Installing the remotes package")
+	install.packages("remotes", repos = "http://cran.rstudio.com")
+}
+if(!("microhaplot" %in% inst_packs)) {
+	message("Installing microhaplot")
+	remotes::install_github(
+		"ngthomas/microhaplot",
+		build_vignettes = FALSE,
+		build_opts = c("--no-resave-data", "--no-manual"),
+		upgrade = "never" 
+	)
+}
+microhaplot::mvShinyHaplot(run_dir)
+
+# get rid of the microhaplot example files:
+file.remove(
+	file.path(
+		run_dir, 
+		c(
+			"microhaplot/fish1.rds",
+			"microhaplot/fish1_posinfo.rds",
+			"microhaplot/fish2.rds",
+			"microhaplot/fish2_posinfo.rds"
+		)
+	)
+)

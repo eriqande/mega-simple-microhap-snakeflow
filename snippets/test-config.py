@@ -6,8 +6,11 @@ import pandas as pd
 from snakemake.utils import validate
 from snakemake.io import load_configfile
 from snakemake.io import expand
+from snakemake.io import unpack
 
 config = load_configfile("config/config.yaml")
+
+config["run_dir"] = "data/201019_M02749_0096_000000000-CV34D"
 
 
 # here are some lines to definee a spoofed wildcards variable for testing
@@ -47,7 +50,7 @@ target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta(wildcards)
 
 
 # here we read the units file and make sure it is working right
-units  = pd.read_csv("data/201019_M02749_0096_000000000-CV34D/units.csv", dtype={"sample": str, "Markers": str}).set_index(["sample", "Markers"], drop=False).sort_index()
+#units  = pd.read_csv("data/201019_M02749_0096_000000000-CV34D/units.csv", dtype={"sample": str, "Markers": str}).set_index(["sample", "Markers"], drop=False).sort_index()
 
 requested_vcfs_from_units_and_config()
 
