@@ -40,29 +40,32 @@ marker_sets:
     genome:
       Otsh_v1.0:
         regions: config/regions/LFAR-Otsh_v1.0.txt
-        variants:
-          snps_only: config/canonical_variants/bogus_just_here_to_show_where_canonicals_would_go.vcf
+        microhap_variants:
+          all_variants: config/canonical_variation/LFAR-all-snps-round-1.vcf
   WRAP:
     genome:
       Otsh_v1.0:
         regions: config/regions/WRAP-Otsh_v1.0.txt
+        microhap_variants:
+          all_variants: config/canonical_variation/WRAP-all-snps-round-1.vcf
+
   ROSA:
     target_fasta:
       fasta:
         rosawr: config/target_fastas/greb1_rosa_with_wrdiag_reference.fasta
-      variants:
+      microhap_variants:
         single_snps: config/canonical_variants/bogus_rosa.vcf
   TRANSITION:
     target_fasta:
       fasta:
         transition_204: config/target_fastas/chinook_204amps_transition.fasta
-      variants:
+      microhap_variants:
         snplicons: config/canonical_variation/chinook_204amps_ultima4_transition_multi_targets.vcf
   SNPS84:
     target_fasta:
       fasta:
         snps84: config/target_fastas/chinook_84amps.fasta
-      variants:
+      microhap_variants:
         single_snps: config/canonical_variation/chinook_84amps_single_targets.vcf
 
 

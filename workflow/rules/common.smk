@@ -97,7 +97,7 @@ def fna_from_marker_set_and_target_fasta(wildcards):
 # it by calling it in a lambda function.
 # type is either fullg or target_fasta or fullgex_remapped
 # trunk is whether it is bam, sam, or idxstats, etc.
-# ext is the extensions the file should have.  IT MUST INCLUDE THE PERIOD (i.e. ".bam", not "bam")
+# ext is the extensions the file should have.  IT MUST INCLUDE THE PERIOD (i.e. ".bam", not "bam") 
 def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
     if(type == "fullg"):
         # first, get the pandas data frame of samples for the particular marker set
@@ -147,9 +147,13 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
                     EXT = ext)]
                 return ret
             else:
-                raise ValueError("type must be fullg or target_fasta")
+                raise ValueError("type must be fullg or target_fasta or fullgex_remapped")
 
 
+
+# get the canonical variants VCF for microhaplot for fullgex_remapped
+def fullgex_remapped_mh_vcf_from_marker_set_genome_microhap_vcf(wildcards):
+    return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["microhap_variants"][wildcards.microhap_variants]
 
 
 #### Functions for defining output files from units and config ####
@@ -193,5 +197,27 @@ def requested_vcfs_from_units_and_config():
 
     return gf + gfex + tf
 
+
+
+
+
+# this is incomplete.  Currently it just gets the fullgex_and_mapped_to_extracted ones
+# because the others need some revamping in the config tree.
+def requested_microhap_outputs_from_units_and_config():
+    # then, also do the genome-focused ones that have been extracted and remapped to the
+    # thinned genomes.    
+    MS = list(set(list(gf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    gfex = list()
+    for m in MS:
+        for g in [str(k) for k in config["marker_sets"][m]["genome"].keys()]:
+            for v in  [str(k) for k in config["marker_sets"][m]["genome"][g]["microhap_variants"].keys()]:
+                gfex = gfex + ["{run_dir}/microhaplot/{marker_set}--fullgex_remapped_to_thinned--{genome}--{microhap_variants}.rds".format(
+                    run_dir = config["run_dir"],
+                    marker_set = m,
+                    genome = g,
+                    microhap_variants = v
+                )]
+    return gfex
 
 
