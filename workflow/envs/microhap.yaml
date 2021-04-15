@@ -1,0 +1,22 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - perl ==5.32.0
+  - r-base ==4.0.3
+  - r-dt
+  - r-dplyr
+  - r-ggplot2
+  - r-gtools
+  - r-magrittr
+  - r-scales
+  - r-shiny
+  - r-shinybs
+  - r-tidyr
+  - r-shinywidgets
+  - r-ggiraph
+  - r-remotes
+  - r-magrittr
+  - r-gdtools
+

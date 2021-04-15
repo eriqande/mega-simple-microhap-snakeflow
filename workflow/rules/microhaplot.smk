@@ -44,9 +44,29 @@ rule microhap_extract_fullgex_remapped:
 		"{run_dir}/logs/microhap_extract_fullgex_remapped/{marker_set}--{genome}--{microhap_variants}.log"
 	envmodules:
 		"R/4.0.3"  # this is for SEDNA. I can't get a conda-installed R to work
+	threads: 10
 	output:
 		rds="{run_dir}/microhaplot/{marker_set}--fullgex_remapped_to_thinned--{genome}--{microhap_variants}.rds"
 	script:
 		"../script/extract_microhaps.R"
+
+
+# here is the rule for target fastas
+rule microhap_extract_target_fastas:
+	input:
+		sams = lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "target_fasta", trunk = "sams", ext = ".sam"),
+		input_vcf = target_fasta_mh_vcf_from_marker_set_genome_microhap_vcf,
+		ui = "{run_dir}/microhaplot/ui.R",
+		shiny = "{run_dir}/microhaplot/server.R" 
+	log:
+		"{run_dir}/logs/microhap_extract_target_fasta/{marker_set}--{target_fasta}--{microhap_variants}.log"
+	envmodules:
+		"R/4.0.3"  # this is for SEDNA. I can't get a conda-installed R to work
+	threads: 10
+	output:
+		rds="{run_dir}/microhaplot/{marker_set}--target_fastas--{target_fasta}--{microhap_variants}.rds"
+	script:
+		"../script/extract_microhaps.R"
 	#shell:
 	#	"for i in {input.sams}; do echo $i; done  > {output.rds}"
+

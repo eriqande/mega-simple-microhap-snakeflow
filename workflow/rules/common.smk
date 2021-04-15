@@ -89,7 +89,7 @@ def rg_from_sample(wildcards):
 
 def fna_from_marker_set_and_target_fasta(wildcards):
     """get path to a target fasta"""
-    return config["marker_sets"][wildcards.marker_set]["target_fasta"]["fasta"][wildcards.target_fasta]
+    return config["marker_sets"][wildcards.marker_set]["target_fasta"][wildcards.target_fasta]["fasta"]
 
 
 # here is a more general version  that I can call
@@ -156,6 +156,12 @@ def fullgex_remapped_mh_vcf_from_marker_set_genome_microhap_vcf(wildcards):
     return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["microhap_variants"][wildcards.microhap_variants]
 
 
+# get the canonical variants VCF for microhaplot for target fastas
+def target_fasta_mh_vcf_from_marker_set_genome_microhap_vcf(wildcards):
+    return config["marker_sets"][wildcards.marker_set]["target_fasta"][wildcards.target_fasta]["microhap_variants"][wildcards.microhap_variants]
+
+
+
 #### Functions for defining output files from units and config ####
 
 
@@ -183,7 +189,7 @@ def requested_vcfs_from_units_and_config():
     tf = list()
     for m in MS:
         # list of target-fasta fastas they are associated with
-        t = [str(k) for k in config["marker_sets"][m]["target_fasta"]["fasta"].keys()]
+        t = [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]
         tf = tf + expand("{rd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, t = t)
     # then, also do the genome-focused ones that have been extracted and remapped to the
     # thinned genomes.    
@@ -204,7 +210,7 @@ def requested_vcfs_from_units_and_config():
 # this is incomplete.  Currently it just gets the fullgex_and_mapped_to_extracted ones
 # because the others need some revamping in the config tree.
 def requested_microhap_outputs_from_units_and_config():
-    # then, also do the genome-focused ones that have been extracted and remapped to the
+    # do the genome-focused ones that have been extracted and remapped to the
     # thinned genomes.    
     MS = list(set(list(gf_units["Markers"])))
     # now, expand each of those by the genomes they might be associated with
@@ -218,6 +224,18 @@ def requested_microhap_outputs_from_units_and_config():
                     genome = g,
                     microhap_variants = v
                 )]
-    return gfex
+    # now we will do the target fasta ones
+    MS = list(set(list(tf_units["Markers"])))
+    tf = list()
+    for m in MS:
+        for t in [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]:
+            for v in [str(k) for k in config["marker_sets"][m]["target_fasta"][t]["microhap_variants"].keys()]:
+                tf = tf + ["{run_dir}/microhaplot/{marker_set}--target_fastas--{targ_fast}--{microhap_variants}.rds".format(
+                    run_dir = config["run_dir"],
+                    marker_set = m,
+                    targ_fast = t,
+                    microhap_variants = v
+                )]
+    return gfex + tf
 
 

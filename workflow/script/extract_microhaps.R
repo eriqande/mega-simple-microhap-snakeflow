@@ -12,6 +12,11 @@ vcf <- snakemake@input$input_vcf
 
 outfile <- snakemake@output$rds
 
+num_threads <- snakemake@threads[1]
+
+#save.image(file = "/tmp/Rdata")
+#stop()
+
 
 
 library(tidyverse)
@@ -65,5 +70,5 @@ haplo.read.tbl <- prepHaplotFiles(
   label.path = label_file_path,
   vcf.path = vcf,
   app.path = app_path,
-  n.jobs = 1
+  n.jobs = num_threads
 )
