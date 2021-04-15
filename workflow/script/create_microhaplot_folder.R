@@ -7,19 +7,23 @@ run_dir = snakemake@params$rd
 
 
 inst_packs <- rownames(installed.packages())
+if(!("dplyr" %in% inst_packs)) {
+	message("Installing the remotes package")
+	install.packages("dplyr", repos = "http://cran.rstudio.com")
+}
 if(!("remotes" %in% inst_packs)) {
 	message("Installing the remotes package")
 	install.packages("remotes", repos = "http://cran.rstudio.com")
 }
-if(!("microhaplot" %in% inst_packs)) {
-	message("Installing microhaplot")
-	remotes::install_github(
-		"ngthomas/microhaplot",
-		build_vignettes = FALSE,
-		build_opts = c("--no-resave-data", "--no-manual"),
-		upgrade = "never" 
-	)
-}
+message("Installing microhaplot")
+remotes::install_github(
+	"eriqande/microhaplot",
+	ref = "just-for-extracting",
+	build_vignettes = FALSE,
+	build_opts = c("--no-resave-data", "--no-manual"),
+	upgrade = "never" 
+)
+
 microhaplot::mvShinyHaplot(run_dir)
 
 # get rid of the microhaplot example files:

@@ -9,6 +9,8 @@ rule microhap_shiny_stuff:
 		"{run_dir}/microhaplot/server.R"
 	log:
 		"{run_dir}/logs/microhap_shiny_stuff/microhap-install-etc.log"
+#	conda:
+#		"../envs/microhap.yaml"
 	envmodules:
 		"R/4.0.3"  # this is for SEDNA. I can't get a conda-installed R to work
 	script:
