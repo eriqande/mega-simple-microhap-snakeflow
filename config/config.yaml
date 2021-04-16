@@ -1,14 +1,15 @@
 species: Chinook
 
-run_dir: .test/data
+run_dir: .test/data  # set it on the command line to the directory in which raw, samples.csv, and units.csv reside
 
 # the following are names of files that are assumed to be
-# within the run_dir
+# within the run_dir.  NOTE! These names might be hardwired
+# in extract_microhaplotypes.R.  Don't change these...
 samples: samples.csv
 units: units.csv
 
 # set genomes up to be downloaded from url.  They will
-# be placed in resources/genomes/name_of_genome/name_of_genome.fna
+# be placed in resources/{species_dir}/genomes/name_of_genome/name_of_genome.fna
 # where name_of_genome is like Otsh_v1.0
 genomes:
   Otsh_v1.0:

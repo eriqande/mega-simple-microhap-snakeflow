@@ -9,15 +9,14 @@ rule flash_paired_ends:
     fq1=fq1_from_sample_and_run,
     fq2=fq2_from_sample_and_run
   output:
-    EF="{run_dir}/flash/{sample}.extendedFrags.fastq.gz",
-    #pref=""
+    EF="{run_dir}/{species_dir}/flash/{sample}.extendedFrags.fastq.gz",
   log:
-    stdout="{run_dir}/logs/flash/{sample}.stdout.log",
-    stderr="{run_dir}/logs/flash/{sample}.stderr.log"
+    stdout="{run_dir}/{species_dir}/logs/flash/{sample}.stdout.log",
+    stderr="{run_dir}/{species_dir}/logs/flash/{sample}.stderr.log"
   conda:
     "../envs/flash.yaml"
   shell:
     "flash -m 4 -M 100 -z -O  "
-    " --output-prefix={wildcards.run_dir}/flash/{wildcards.sample} "
+    " --output-prefix={wildcards.run_dir}/{wildcards.species_dir}/flash/{wildcards.sample} "
     " {input.fq1} {input.fq2} > {log.stdout}  2> {log.stderr} "
 

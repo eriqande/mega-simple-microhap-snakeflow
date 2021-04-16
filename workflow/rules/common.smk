@@ -49,22 +49,6 @@ def region_files_from_marker_set_and_genome(wildcards):
     """Get path to the regions file given the genome and marker set"""
     return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["regions"]
 
-def fna_from_genome(wildcards):
-    """Get path to genome fasta from a given genome"""
-    return r"resources/genomes/{genome}/{genome}.fna".format(genome=wildcards.genome)
-
-def thinned_fna_from_genome_and_marker_set(wildcards):
-    """Get path to genome fasta from a given genome"""
-    return r"resources/thinned_genomes/{genome}/{marker_set}/thinned.fna".format(genome=wildcards.genome, marker_set = wildcards.marker_set)
-
-def fai_from_genome(wildcards):
-    """Get path to genome fasta from a given genome"""
-    return r"resources/genomes/{genome}/{genome}.fna.fai".format(genome=wildcards.genome)
-
-def fna_bwt_from_genome(wildcards):
-    """Get path to genome fasta from a given genome"""
-    return r"resources/genomes/{genome}/{genome}.fna.bwt".format(genome=wildcards.genome)
-
 def fq1_from_sample_and_run(wildcards):
     """Get path to a sample's read1 fastq file"""
     return r"{run_dir}/raw/{fq}".format(
@@ -106,8 +90,9 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
         ret = list()
         for index, row in DF.iterrows():
             S = row['sample']
-            ret = ret + [r"{R}/{TRUNK}/fullg-extracted/{M}/{G}/{S}{EXT}".format(
+            ret = ret + [r"{R}/{species_dir}/{TRUNK}/fullg-extracted/{M}/{G}/{S}{EXT}".format(
             R = wildcards.run_dir,
+            species_dir = wildcards.species_dir,
             TRUNK = trunk,
             M = wildcards.marker_set,
             G = wildcards.genome,
@@ -122,8 +107,9 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
             ret = list()
             for index, row in DF.iterrows():
                 S = row['sample']
-                ret = ret + [r"{R}/{TRUNK}/target_fastas/{M}/{T}/{S}{EXT}".format(
+                ret = ret + [r"{R}/{species_dir}/{TRUNK}/target_fastas/{M}/{T}/{S}{EXT}".format(
                 R = wildcards.run_dir,
+                species_dir = wildcards.species_dir,
                 TRUNK = trunk,
                 M = wildcards.marker_set,
                 T = wildcards.target_fasta,
@@ -138,8 +124,9 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
                 ret = list()
                 for index, row in DF.iterrows():
                     S = row['sample']
-                    ret = ret + [r"{R}/{TRUNK}/fullgex_remapped_to_thinned/{M}/{G}/{S}{EXT}".format(
+                    ret = ret + [r"{R}/{species_dir}/{TRUNK}/fullgex_remapped_to_thinned/{M}/{G}/{S}{EXT}".format(
                     R = wildcards.run_dir,
+                    species_dir = wildcards.species_dir,
                     TRUNK = trunk,
                     M = wildcards.marker_set,
                     G = wildcards.genome,
@@ -182,7 +169,7 @@ def requested_vcfs_from_units_and_config():
     for m in MS:
         # list of full genomes they are associated with
         g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
-        gf = gf + expand("{rd}/vcfs/{ms}/fullg/{g}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, g = g)
+        gf = gf + expand("{rd}/{sd}/vcfs/{ms}/fullg/{g}/variants-bcftools.vcf", rd = config["run_dir"], sd = config["species"], ms = m, g = g)
     # then do the target-fasta focused ones
     MS = list(set(list(tf_units["Markers"])))
     # now, expand each of those by the specific target-fasta seqs they might be associated with
@@ -190,7 +177,7 @@ def requested_vcfs_from_units_and_config():
     for m in MS:
         # list of target-fasta fastas they are associated with
         t = [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]
-        tf = tf + expand("{rd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, t = t)
+        tf = tf + expand("{rd}/{sd}/vcfs/{ms}/target_fasta/{t}/variants-bcftools.vcf", rd = config["run_dir"], sd = config["species"], ms = m, t = t)
     # then, also do the genome-focused ones that have been extracted and remapped to the
     # thinned genomes.    
     MS = list(set(list(gf_units["Markers"])))
@@ -199,10 +186,9 @@ def requested_vcfs_from_units_and_config():
     for m in MS:
         # list of full genomes they are associated with
         g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
-        gfex = gfex + expand("{rd}/vcfs/{ms}/fullgex_remapped/{g}/variants-bcftools.vcf", rd = config["run_dir"], ms = m, g = g)
+        gfex = gfex + expand("{rd}/{sd}/vcfs/{ms}/fullgex_remapped/{g}/variants-bcftools.vcf", rd = config["run_dir"], sd = config["species"], ms = m, g = g)
 
     return gf + gfex + tf
-
 
 
 
@@ -218,8 +204,9 @@ def requested_microhap_outputs_from_units_and_config():
     for m in MS:
         for g in [str(k) for k in config["marker_sets"][m]["genome"].keys()]:
             for v in  [str(k) for k in config["marker_sets"][m]["genome"][g]["microhap_variants"].keys()]:
-                gfex = gfex + ["{run_dir}/microhaplot/{marker_set}--fullgex_remapped_to_thinned--{genome}--{microhap_variants}.rds".format(
+                gfex = gfex + ["{run_dir}/{species_dir}/microhaplot/{marker_set}--fullgex_remapped_to_thinned--{genome}--{microhap_variants}.rds".format(
                     run_dir = config["run_dir"],
+                    species_dir = config["species"],
                     marker_set = m,
                     genome = g,
                     microhap_variants = v
@@ -230,8 +217,9 @@ def requested_microhap_outputs_from_units_and_config():
     for m in MS:
         for t in [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]:
             for v in [str(k) for k in config["marker_sets"][m]["target_fasta"][t]["microhap_variants"].keys()]:
-                tf = tf + ["{run_dir}/microhaplot/{marker_set}--target_fastas--{targ_fast}--{microhap_variants}.rds".format(
+                tf = tf + ["{run_dir}/{species_dir}/microhaplot/{marker_set}--target_fastas--{targ_fast}--{microhap_variants}.rds".format(
                     run_dir = config["run_dir"],
+                    species_dir = config["species"],
                     marker_set = m,
                     targ_fast = t,
                     microhap_variants = v

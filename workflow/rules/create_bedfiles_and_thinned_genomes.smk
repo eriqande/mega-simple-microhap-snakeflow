@@ -3,9 +3,9 @@ rule region_bedfiles_full:
   input:
     regfile=region_files_from_marker_set_and_genome
   output:
-    bed="resources/bedfiles/fullg/{marker_set}-{genome}.bed"
+    bed="resources/{species_dir}/bedfiles/fullg/{marker_set}-{genome}.bed"
   log:
-    "resources/logs/region_bedfiles_full/{marker_set}-{genome}.log"
+    "resources/{species_dir}/logs/region_bedfiles_full/{marker_set}-{genome}.log"
   conda:
     "../envs/sedgawk.yaml"
   shell:
@@ -23,19 +23,19 @@ rule region_bedfiles_full:
 rule make_thinned_genomes:
   input:
     regfile=region_files_from_marker_set_and_genome,
-    fa=fna_from_genome,
-    fai=fai_from_genome
+    fa="resources/{species_dir}/genomes/{genome}/{genome}.fna",
+    fai="resources/{species_dir}/genomes/{genome}/{genome}.fna.fai"
   log:
-    faidx="resources/logs/make_thinned_genomes/faidx-{marker_set}-{genome}.log",
-    bwaidx="resources/logs/make_thinned_genomes/bwa_index-{marker_set}-{genome}.log"
+    faidx="resources/{species_dir}/logs/make_thinned_genomes/faidx-{marker_set}-{genome}.log",
+    bwaidx="resources/{species_dir}/logs/make_thinned_genomes/bwa_index-{marker_set}-{genome}.log"
   envmodules:
     "aligners/bwa",
     "bio/samtools"
   conda:
     "../envs/bwasam.yaml"
   output:
-    idx_files=multiext("resources/thinned_genomes/{genome}/{marker_set}/thinned.fna", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa"),
-    fa="resources/thinned_genomes/{genome}/{marker_set}/thinned.fna"
+    idx_files=multiext("resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+    fa="resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna"
   shell:
     "samtools faidx {input.fa} $(cat {input.regfile}) > {output.fa} 2> {log.faidx}; "
     "bwa index {output.fa} 2> {log.bwaidx}"

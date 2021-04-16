@@ -14,9 +14,6 @@ outfile <- snakemake@output$rds
 
 num_threads <- snakemake@threads[1]
 
-#save.image(file = "/tmp/Rdata")
-#stop()
-
 
 
 library(tidyverse)
@@ -31,10 +28,11 @@ sams_tibble <- tibble(
 # first create the label file by parsing the units.csv
 # joining NMFS_DNA_ID on there and then writing it out
 # into the sams directory
-run_dir <- str_replace(sams_dir, "/sams.*$", "")
+run_dir_with_species <- str_replace(sams_dir, "/sams.*$", "")
+run_dir <- dirname(run_dir_with_species)
 marker_set <- str_replace(basename(outfile), "--.*$", "")
 label_file_path <- file.path(sams_dir, "labels.txt")
-app_path <- file.path(run_dir, "microhaplot")
+app_path <- file.path(run_dir_with_species, "microhaplot")
 out_path <- tempfile()
 dir.create(out_path, recursive = TRUE, showWarnings = FALSE)
 
