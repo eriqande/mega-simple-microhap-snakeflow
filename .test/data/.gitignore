@@ -1,5 +1,5 @@
-*
 !.gitignore
-!raw
+!raw/**
 !samples.csv
 !units.csv
+!SampleSheet.csv
