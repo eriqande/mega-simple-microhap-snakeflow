@@ -4,7 +4,9 @@ from snakemake.utils import validate
 
 #### Config file and sample spreadsheets ####
 
-configfile: "config/config.yaml"
+# Chinook is the default, but the configfile should
+# really be set on the command line with --configfile config/XXXXX/config.yaml
+configfile: "config/Chinook/config.yaml"  
 
 # get path to samples file within the run_dir
 samples_file = r"{run_dir}/{sample_file}".format(

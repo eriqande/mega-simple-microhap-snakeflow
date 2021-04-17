@@ -40,34 +40,34 @@ marker_sets:
   LFAR:
     genome:
       Otsh_v1.0:
-        regions: config/regions/LFAR-Otsh_v1.0.txt
+        regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
         microhap_variants:
-          all_variants: config/canonical_variation/LFAR-all-snps-round-1.vcf
+          all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
   WRAP:
     genome:
       Otsh_v1.0:
-        regions: config/regions/WRAP-Otsh_v1.0.txt
+        regions: config/Chinook/regions/WRAP-Otsh_v1.0.txt
         microhap_variants:
-          all_variants: config/canonical_variation/WRAP-all-snps-round-1.vcf
+          all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
 
   ROSA:
     target_fasta:
       rosawr:
-        fasta: config/target_fastas/greb1_rosa_with_wrdiag_reference.fasta
+        fasta: config/Chinook/target_fastas/greb1_rosa_with_wrdiag_reference.fasta
         microhap_variants:
-          all_variants: config/canonical_variation/ROSA-rosawr-all-snps-round-1.vcf
+          all_variants: config/Chinook/canonical_variation/ROSA-rosawr-all-snps-round-1.vcf
   TRANSITION:
     target_fasta:
       transition_204:
-        fasta: config/target_fastas/chinook_204amps_transition.fasta
+        fasta: config/Chinook/target_fastas/chinook_204amps_transition.fasta
         microhap_variants:
-          snplicons: config/canonical_variation/chinook_204amps_ultima4_transition_multi_targets.vcf
+          snplicons: config/Chinook/canonical_variation/chinook_204amps_ultima4_transition_multi_targets.vcf
   SNPS84:
     target_fasta:
       snps84:
-        fasta: config/target_fastas/chinook_84amps.fasta
+        fasta: config/Chinook/target_fastas/chinook_84amps.fasta
         microhap_variants:
-          single_snps: config/canonical_variation/chinook_84amps_single_targets.vcf
+          single_snps: config/Chinook/canonical_variation/chinook_84amps_single_targets.vcf
 
 
 
