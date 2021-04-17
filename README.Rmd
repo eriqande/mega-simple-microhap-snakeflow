@@ -15,7 +15,53 @@ This repository holds the Snakefile and associated files for Eric's first attemp
 (still under construction!)
 at making a SnakeMake-based workflow for our microhaplotypes.
 
-# The way forward
+It is near completion.  To try it out on the test data:
+
+1. Get this repository with something like `git clone https://github.com/eriqande/mega-simple-microhap-snakeflow.git`
+1. Make sure you have Miniconda installed.
+1. Get a full install of a Snakemake conda environment by following the directions
+[here](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+1. Activate that snakemake conda environment
+1. From within the `mega-simple-microhap-snakeflow` directory give this command:
+    ```{sh, eval=FALSE}
+    snakemake --config run_dir=.test/data --configfile config/Chinook/config.yaml  --use-conda -np
+    ```
+    It should spit out a bunch of stuff that ends with something like this:
+    ```{sh, eval=FALSE}
+Job counts:
+	count	jobs
+	1	all
+	2	call_fullg_marker_sets_with_bcftools
+	2	call_fullgex_remapped_markers_with_bcftools
+	2	call_target_fasta_marker_sets_with_bcftools
+	20	extract_reads_from_full_genomes
+	33	flash_paired_ends
+	20	flashed_fastqs_from_fullg_extracted_bams
+	1	make_microhap_folder
+	20	map_fullg_extracted_to_thinned_genomes
+	20	map_to_full_genome
+	26	map_to_target_fastas
+	2	microhap_extract_fullgex_remapped
+	2	microhap_extract_target_fastas
+	151
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
+    ```
+1. If that worked, you can do a full run with this:
+    ```{sh, eval=FALSE}
+    snakemake --config run_dir=.test/data --configfile config/Chinook/config.yaml  --use-conda --cores 1
+    ```
+The test data set is small enough that a single core is enough.
+However, the first time you run it, you can expect to spend quite
+a bit of time (30 minute to a couple hours, depending on the speed of
+your computer) downloading the Otsh_v1.0 genome and indexing it with
+bwa.
+
+
+
+
+
+
+# Development related stuff.  Will be cleaned up later.
 
 OK, after a lot of thinking and experimenting, this is how I
 want to do it:
@@ -83,7 +129,7 @@ read_csv(".test/data/units.csv")
 
 This file is in `config/newconfig.yaml`.  So far it looks like this:
 ```yaml
-`r paste(readLines("config/config.yaml"), collapse = "\n")`
+`r paste(readLines("config/Chinook/config.yaml"), collapse = "\n")`
 ```
 
 # Notes on Development

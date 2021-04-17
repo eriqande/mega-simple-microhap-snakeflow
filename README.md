@@ -1,7 +1,8 @@
 mega-simple-microhap-snakeflow
 ================
 
-  - [The way forward](#the-way-forward)
+  - [Development related stuff. Will be cleaned up
+    later.](#development-related-stuff.-will-be-cleaned-up-later.)
       - [samples.csv and units.csv](#samples.csv-and-units.csv)
       - [The config file](#the-config-file)
   - [Notes on Development](#notes-on-development)
@@ -31,7 +32,62 @@ This repository holds the Snakefile and associated files for Eric’s
 first attempt (still under construction\!) at making a SnakeMake-based
 workflow for our microhaplotypes.
 
-# The way forward
+It is near completion. To try it out on the test data:
+
+1.  Get this repository with something like `git clone
+    https://github.com/eriqande/mega-simple-microhap-snakeflow.git`
+
+2.  Make sure you have Miniconda installed.
+
+3.  Get a full install of a Snakemake conda environment by following the
+    directions
+    [here](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+
+4.  Activate that snakemake conda environment
+
+5.  From within the `mega-simple-microhap-snakeflow` directory give this
+    command:
+    
+    ``` sh
+    snakemake --config run_dir=.test/data --configfile config/Chinook/config.yaml  --use-conda -np
+    ```
+    
+    It should spit out a bunch of stuff that ends with something like
+    this:
+    
+    ``` sh
+    Job counts:
+        count   jobs
+        1   all
+        2   call_fullg_marker_sets_with_bcftools
+        2   call_fullgex_remapped_markers_with_bcftools
+        2   call_target_fasta_marker_sets_with_bcftools
+        20  extract_reads_from_full_genomes
+        33  flash_paired_ends
+        20  flashed_fastqs_from_fullg_extracted_bams
+        1   make_microhap_folder
+        20  map_fullg_extracted_to_thinned_genomes
+        20  map_to_full_genome
+        26  map_to_target_fastas
+        2   microhap_extract_fullgex_remapped
+        2   microhap_extract_target_fastas
+        151
+    This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
+    ```
+
+6.  If that worked, you can do a full run with this:
+    
+    ``` sh
+    snakemake --config run_dir=.test/data --configfile config/Chinook/config.yaml  --use-conda --cores 1
+    ```
+    
+    The test data set is small enough that a single core is enough.
+    However, the first time you run it, you can expect to spend quite a
+    bit of time (30 minute to a couple hours, depending on the speed of
+    your computer) downloading the Otsh\_v1.0 genome and indexing it
+    with bwa.
+
+# Development related stuff. Will be cleaned up later.
 
 OK, after a lot of thinking and experimenting, this is how I want to do
 it:
@@ -85,17 +141,20 @@ samples <- read_csv(".test/data/samples.csv")
 samples
 ```
 
-    ## # A tibble: 8 x 6
-    ##   Sample_ID NMFS_DNA_ID Plate Marker_Sets        fq1             fq2            
-    ##   <chr>     <chr>       <chr> <chr>              <chr>           <chr>          
-    ## 1 CH_001    T0123       W56   LFAR               CH-001-aaqr-R1… CH-001-aaqr-R2…
-    ## 2 CH_002    T0124       W56   ROSA               CH-002-aaqr-R1… CH-002-aaqr-R2…
-    ## 3 CH_003    T0125       W56   WRAP               CH-003-aaqr-R1… CH-003-aaqr-R2…
-    ## 4 CH_004    T0126       W56   TRANSITION         CH-004-aaqr-R1… CH-004-aaqr-R2…
-    ## 5 CH_005    T0127       W56   LFAR,WRAP          CH-005-aaqr-R1… CH-005-aaqr-R2…
-    ## 6 CH_006    T0128       W56   TRANSITION,ROSA    CH-006-aaqr-R1… CH-006-aaqr-R2…
-    ## 7 CH_007    T0129       W56   ROSA,TRANSITION,W… CH-007-aaqr-R1… CH-007-aaqr-R2…
-    ## 8 CH_008    T0130       W56   WRAP,ROSA,LFAR     CH-008-aaqr-R1… CH-008-aaqr-R2…
+    ## # A tibble: 33 x 8
+    ##    sample Marker_Sets NMFS_DNA_ID Sample_ID Sample_Name Sample_Project fq1  
+    ##    <chr>  <chr>       <chr>       <chr>     <chr>       <chr>          <chr>
+    ##  1 s0001  TRANSITION… T194879     CH_33547  CH-33547    CH_microhaps_… CH-3…
+    ##  2 s0002  TRANSITION… T194887     CH_33548  CH-33548    CH_microhaps_… CH-3…
+    ##  3 s0003  TRANSITION… T194895     CH_33549  CH-33549    CH_microhaps_… CH-3…
+    ##  4 s0004  TRANSITION… T194903     CH_33550  CH-33550    CH_microhaps_… CH-3…
+    ##  5 s0005  TRANSITION… T194911     CH_33551  CH-33551    CH_microhaps_… CH-3…
+    ##  6 s0006  TRANSITION… T194919     CH_33552  CH-33552    CH_microhaps_… CH-3…
+    ##  7 s0007  TRANSITION… T194927     CH_33553  CH-33553    CH_microhaps_… CH-3…
+    ##  8 s0008  TRANSITION… T194935     CH_33554  CH-33554    CH_microhaps_… CH-3…
+    ##  9 s0009  TRANSITION… T194943     CH_33555  CH-33555    CH_microhaps_… CH-3…
+    ## 10 s0010  TRANSITION… T194951     CH_33556  CH-33556    CH_microhaps_… CH-3…
+    ## # … with 23 more rows, and 1 more variable: fq2 <chr>
 
 From this, the units.tsv file would have been made, something like this:
 
@@ -113,23 +172,20 @@ Those have been stored in `.test/data/units.csv` and look like this:
 read_csv(".test/data/units.csv")
 ```
 
-    ## # A tibble: 14 x 6
-    ##    Sample_ID Markers   NMFS_DNA_ID Plate fq1                 fq2                
-    ##    <chr>     <chr>     <chr>       <chr> <chr>               <chr>              
-    ##  1 CH_001    LFAR      T0123       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  2 CH_002    ROSA      T0124       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  3 CH_003    WRAP      T0125       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  4 CH_004    TRANSITI… T0126       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  5 CH_005    LFAR      T0127       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  6 CH_005    WRAP      T0127       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  7 CH_006    TRANSITI… T0128       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  8 CH_006    ROSA      T0128       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ##  9 CH_007    ROSA      T0129       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ## 10 CH_007    TRANSITI… T0129       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ## 11 CH_007    WRAP      T0129       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ## 12 CH_008    WRAP      T0130       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ## 13 CH_008    ROSA      T0130       W56   .test/data/raw/CH-… .test/data/raw/CH-…
-    ## 14 CH_008    LFAR      T0130       W56   .test/data/raw/CH-… .test/data/raw/CH-…
+    ## # A tibble: 46 x 2
+    ##    sample Markers   
+    ##    <chr>  <chr>     
+    ##  1 s0001  TRANSITION
+    ##  2 s0001  ROSA      
+    ##  3 s0002  TRANSITION
+    ##  4 s0002  ROSA      
+    ##  5 s0003  TRANSITION
+    ##  6 s0003  ROSA      
+    ##  7 s0004  TRANSITION
+    ##  8 s0004  ROSA      
+    ##  9 s0005  TRANSITION
+    ## 10 s0005  ROSA      
+    ## # … with 36 more rows
 
 ## The config file
 
@@ -138,35 +194,20 @@ This file is in `config/newconfig.yaml`. So far it looks like this:
 ``` yaml
 species: Chinook
 
-run_dir: .test/data
+run_dir: .test/data  # set it on the command line to the directory in which raw, samples.csv, and units.csv reside
 
 # the following are names of files that are assumed to be
-# within the run_dir
+# within the run_dir.  NOTE! These names might be hardwired
+# in extract_microhaplotypes.R.  Don't change these...
 samples: samples.csv
 units: units.csv
 
 # set genomes up to be downloaded from url.  They will
-# be placed in resources/genomes/name_of_genome/name_of_genome.fna
+# be placed in resources/{species_dir}/genomes/name_of_genome/name_of_genome.fna
 # where name_of_genome is like Otsh_v1.0
 genomes:
   Otsh_v1.0:
     url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/872/995/GCF_002872995.1_Otsh_v1.0/GCF_002872995.1_Otsh_v1.0_genomic.fna.gz
-  nookie2:
-    url: this_would_need_a_download_url_too
-
-
-
-# NOTE: I should be able to replace the next 4 lines of code
-# by simply cycling over config["marker_sets"] and making
-# lists of the marker_sets that have a "genome" and those
-# that have a "target_fasta".  But for now I leave it in here.
-# The name element must be specified as a list here!
-genome_focused_marker_sets:
-  name: ["LFAR", "WRAP", "ROSA"]
-
-# The name element must be specified as a list here!
-target_fasta_focused_marker_sets:
-  name: ["TRANSITION", "ROSA"]
 
 
 # here we give details about our marker sets.  Note that a marker
@@ -193,34 +234,35 @@ marker_sets:
   LFAR:
     genome:
       Otsh_v1.0:
-        regions: config/regions/LFAR-Otsh_v1.0.txt
-        variants:
-          snps_only: config/canonical_variants/LFAR-Otsh_v1-snps-only.vcf
-          everything: config/canonical_variants/LFAR-Otsh_v1-everything.vcf
-      nookie2:
-        regions: config/regions/LFAR-nookie2.txt
+        regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
   WRAP:
     genome:
       Otsh_v1.0:
-        regions: config/regions/WRAP-Otsh_v1.0.txt
+        regions: config/Chinook/regions/WRAP-Otsh_v1.0.txt
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
+
   ROSA:
-    genome:
-      Otsh_v1.0:
-        regions: config/regions/ROSA-Otsh_v1.0.txt
     target_fasta:
-      fasta:
-        rosa_seqs_1: config/target_fastas/rosa-seqs-1-example.fasta
-        rosa_seqs_2: config/target_fastas/rosa-seqs-2-example.fasta
-      variants:
-        snps_only: config/canonical_variants/Chinooks_RoSA_snps_only.vcf
-        snplicons: config/canonical_variants/Chinooks_RoSA_all_variants.vcf
+      rosawr:
+        fasta: config/Chinook/target_fastas/greb1_rosa_with_wrdiag_reference.fasta
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/ROSA-rosawr-all-snps-round-1.vcf
   TRANSITION:
     target_fasta:
-      fasta:
-        transition-panel: config/target_fastas/transition-panel.fna
-      variants:
-        snps_only: config/canonical_variants/Chinooks_transition_snps_only.vcf
-        snplicons: config/canonical_variants/Chinooks_transitions_all_variants.vcf
+      transition_204:
+        fasta: config/Chinook/target_fastas/chinook_204amps_transition.fasta
+        microhap_variants:
+          snplicons: config/Chinook/canonical_variation/chinook_204amps_ultima4_transition_multi_targets.vcf
+  SNPS84:
+    target_fasta:
+      snps84:
+        fasta: config/Chinook/target_fastas/chinook_84amps.fasta
+        microhap_variants:
+          single_snps: config/Chinook/canonical_variation/chinook_84amps_single_targets.vcf
+
 
 
 
