@@ -17,6 +17,7 @@ include: "rules/flash.smk"
 include: "rules/map_and_extract.smk"
 include: "rules/variant_calling.smk"
 include: "rules/microhaplot.smk"
+include: "rules/multi_dir_variant_calling.smk"
 
 
 
