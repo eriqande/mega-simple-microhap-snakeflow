@@ -1,5 +1,6 @@
 import pandas as pd
 from snakemake.utils import validate
+from glob import glob
 
 
 #### Config file and sample spreadsheets ####
@@ -151,6 +152,22 @@ def target_fasta_mh_vcf_from_marker_set_genome_microhap_vcf(wildcards):
 
 
 
+# this is for returning the BAMs of a particular species, marker set, 
+# mapping type, genome, etc. from multiple completed runs
+def existing_bams_for_multirun_fullgex_remapped(wildcards):
+    # first get name of files 
+    dirs_file = "MULTI_RUN_RESULTS/{md_dir}/dirs.txt".format(md_dir=wildcards.multi_run_dir)
+    with open(dirs_file) as f:
+        dirs_list = f.readlines()
+    dirs_list = [x.strip() for x in dirs_list if x.strip()] # strip whitespace and empty lines
+    globs_list = ["{d}/{s}/bams/fullgex_remapped_to_thinned/{m}/{g}/*.bam".format(d=dir, s=wildcards.species, m=wildcards.marker_set, g=wildcards.genome) for dir in dirs_list]
+    bam_list = list()
+    for G in globs_list:
+        bam_list = bam_list + glob.glob(G)
+    return bam_list
+
+
+
 #### Functions for defining output files from units and config ####
 
 
@@ -227,5 +244,6 @@ def requested_microhap_outputs_from_units_and_config():
                     microhap_variants = v
                 )]
     return gfex + tf
+
 
 
