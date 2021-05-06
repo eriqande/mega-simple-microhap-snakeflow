@@ -6,7 +6,7 @@ include: "rules/common.smk"
 rule all:
   input:
     requested_vcfs_from_units_and_config(),
-    requested_microhap_outputs_from_units_and_config()
+    #requested_microhap_outputs_from_units_and_config()
 
 
 ##### Modules #####

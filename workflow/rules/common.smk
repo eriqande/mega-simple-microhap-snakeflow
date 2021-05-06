@@ -3,6 +3,11 @@ from snakemake.utils import validate
 from glob import glob
 
 
+#### Global wildcard constraints ####
+#wildcard_constraints:
+#    run_dir = "^(?!.*MULTI_RUN_RESULTS.*)"
+
+
 #### Config file and sample spreadsheets ####
 
 # Chinook is the default, but the configfile should
@@ -160,10 +165,10 @@ def existing_bams_for_multirun_fullgex_remapped(wildcards):
     with open(dirs_file) as f:
         dirs_list = f.readlines()
     dirs_list = [x.strip() for x in dirs_list if x.strip()] # strip whitespace and empty lines
-    globs_list = ["{d}/{s}/bams/fullgex_remapped_to_thinned/{m}/{g}/*.bam".format(d=dir, s=wildcards.species, m=wildcards.marker_set, g=wildcards.genome) for dir in dirs_list]
+    globs_list = ["{d}/{s}/bams/fullgex_remapped_to_thinned/{m}/{g}/*.bam".format(d=dir, s=wildcards.species_dir, m=wildcards.marker_set, g=wildcards.genome) for dir in dirs_list]
     bam_list = list()
     for G in globs_list:
-        bam_list = bam_list + glob.glob(G)
+        bam_list = bam_list + glob(G)
     return bam_list
 
 
