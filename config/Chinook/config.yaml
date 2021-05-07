@@ -43,6 +43,7 @@ marker_sets:
         regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
+          after_5_runs: config/Chinook/canonical_variation/LFAR-8-amplicons-22-variants.vcf
   WRAP:
     genome:
       Otsh_v1.0:

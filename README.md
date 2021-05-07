@@ -1,6 +1,12 @@
 mega-simple-microhap-snakeflow
 ================
 
+  - [Production runs](#production-runs)
+  - [Multi-run variant calling](#multi-run-variant-calling)
+      - [Making a VCF for microhaplot after multi-run variant
+        calling](#making-a-vcf-for-microhaplot-after-multi-run-variant-calling)
+  - [“Post-hoc” Rules](#post-hoc-rules)
+      - [multi\_dir\_variant\_calling.smk](#multi_dir_variant_calling.smk)
   - [Development related stuff. Will be cleaned up
     later.](#development-related-stuff.-will-be-cleaned-up-later.)
       - [samples.csv and units.csv](#samples.csv-and-units.csv)
@@ -86,6 +92,207 @@ It is near completion. To try it out on the test data:
     bit of time (30 minute to a couple hours, depending on the speed of
     your computer) downloading the Otsh\_v1.0 genome and indexing it
     with bwa.
+
+## Production runs
+
+Here is an idea of how a production-run command line might look for five
+directories. After checking out a node with 20 cores…
+
+``` sh
+for i in data/200715_M02749_0092_000000000-CV34F \
+    data/201012_M02749_0095_000000000-CWHDK \
+    data/210129_M02749_0102_000000000-J33JD \
+    data/200828_M02749_0093_000000000-CV2FP \
+    data/201019_M02749_0096_000000000-CV34D; do
+    snakemake --config run_dir=$i --configfile config/Chinook/config.yaml --use-conda --use-envmodules --cores 20
+done
+    
+```
+
+## Multi-run variant calling
+
+This is our current setup to simply call variants after running multiple
+directories. It just using globbing to figure out which BAMs were
+produced. It does not parse the sample sheets of each run to figure out
+which individuals should have BAMs and request those.
+
+This is only imlemented for the fullgex-remapped-to-thinned stuff, at
+the moment, but I will get it going for the target\_fastas soon, too.
+
+Here is how to do it:
+
+1.  Establish a directory in the top level called
+    `MULTI_RUN_RESULTS/some_directory_name` where `some_directory_name`
+    is some informative name.
+
+2.  Inside that directory make a file called `dirs.txt` which lists the
+    run paths to the directories you want to include individuals from
+    (if any for the marker sets you will request). The paths should be
+    relative to the top-level of the `mega-simple-microhap-snakeflow`
+    directory. For example, after the above to steps you might have:
+    
+    ``` sh
+    # A directory
+    MULTI_RUN_RESULTS/5_early_runs
+    
+    # a file dirs.txt within that with the following contents shown
+    (snakemake) [node11: mega-simple-microhap-snakeflow]--% cat MULTI_RUN_RESULTS/5_early_runs/dirs.txt
+    data/200715_M02749_0092_000000000-CV34F
+    data/200828_M02749_0093_000000000-CV2FP
+    data/201012_M02749_0095_000000000-CWHDK
+    data/201019_M02749_0096_000000000-CV34D
+    data/210129_M02749_0102_000000000-J33JD
+    
+    # that is just 5 lines, each with a path to a previously run run directory!
+    ```
+
+3.  Request the output file you want by replacing the wildcards, as
+    appropriate, in the following output path:
+    
+    ``` sh
+    MULTI_RUN_RESULTS/{multi_run_dir}/{species_dir}/vcfs/{marker_set}/fullgex_remapped/{genome}/variants-from-multi-runs-bcftools.vcf
+    ```
+    
+    In our example, if we wanted to do this for both WRAP and LFAR, the
+    output targets we would request would be:
+    
+    ``` sh
+    MULTI_RUN_RESULTS/5_early_runs/Chinook/vcfs/{LFAR,WRAP}/fullgex_remapped/Otsh_v1.0/variants-from-multi-runs-bcftools.vcf
+    ```
+    
+    Note the use of the Unix brace expansion to get two paths out of
+    that—one for LFAR and one for WRAP.
+
+4.  Request that target with snakemake. The full command would look
+    like:
+    
+    ``` sh
+    snakemake --use-conda --cores 20  \
+    MULTI_RUN_RESULTS/5_early_runs/Chinook/vcfs/{LFAR,WRAP}/fullgex_remapped/Otsh_v1.0/variants-from-multi-runs-bcftools.vcf
+    ```
+
+### Making a VCF for microhaplot after multi-run variant calling
+
+The obvious reason for doing multi-run variant calling is to have
+sufficient numbers of individuals from enough populations to ensure that
+you have most of the interesting variants for forming microhaplotypes.
+Here is how you create a new VCF for microhaplot, after doing the above
+multi-run variant calling. Here I show some simple steps for the WRAP
+markers:
+
+First, filter out sites with a lot of missing data:
+
+``` sh
+WRAP=MULTI_RUN_RESULTS/5_early_runs/Chinook/vcfs/WRAP/fullgex_remapped/Otsh_v1.0/variants-from-multi-runs-bcftools.vcf
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% bcftools view -i 'F_MISSING < 0.30' $WRAP | awk '!/^#/' | wc
+     55   37455  867160
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% bcftools view -i 'F_MISSING < 0.10' $WRAP | awk '!/^#/' | wc
+     53   36093  824120
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% bcftools view -i 'F_MISSING < 0.03' $WRAP | awk '!/^#/' | wc
+     53   36093  824120
+# OK! Looks like 53 variants in the 24 regions/microhaps
+
+# How many alternate alleles out of how many total alleles at each site?
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% bcftools view -i 'F_MISSING < 0.03' $WRAP | bcftools query -f '%CHROM\t%POS\t%AC/%AN\n'
+NC_037104.1:55923357-55923657   151 583/1322
+NC_037104.1:55966251-55966551   149 632/1322
+NC_037104.1:55966251-55966551   151 641/1322
+NC_037104.1:56061938-56062238   151 604/1322
+NC_037104.1:56061938-56062238   182 1322/1322
+NC_037104.1:56088878-56089178   151 452/1322
+NC_037108.1:73538966-73539266   151 524/1318
+NC_037108.1:73538966-73539266   160 57/1320
+NC_037108.1:73538966-73539266   214 56/1320
+NC_037108.1:73540716-73541016   151 526/1322
+NC_037108.1:73543706-73544006   130 148/1322
+NC_037108.1:73543706-73544006   133 17/1322
+NC_037108.1:73543706-73544006   151 475/1322
+NC_037108.1:73553140-73553440   151 475/1324
+NC_037112.1:24500367-24500667   151 468/1320
+NC_037112.1:24542569-24542869   151 455/1324
+NC_037112.1:24542569-24542869   165 63/1324
+NC_037112.1:24542569-24542869   172 891/1324
+NC_037112.1:24593758-24594058   151 454/1320
+NC_037112.1:24593758-24594058   181 141/1320
+NC_037112.1:24609163-24609463   151 874/1322
+NC_037112.1:24609163-24609463   188 447/1320
+NC_037112.1:24618993-24619293   109 9/1322
+NC_037112.1:24618993-24619293   131 455/1322
+NC_037112.1:24618993-24619293   151 867/1322
+NC_037112.1:24704405-24704705   151 454/1322
+NC_037112.1:24704405-24704705   207 29/1322
+NC_037112.1:24721041-24721341   141 450/1320
+NC_037112.1:24721041-24721341   162 448/1320
+NC_037112.1:24999768-25000068   125 455/1320
+NC_037112.1:24999768-25000068   147 456/1320
+NC_037112.1:24999768-25000068   155 455/1320
+NC_037112.1:25015012-25015312   118 532/1322
+NC_037112.1:25015012-25015312   151 453/1322
+NC_037112.1:25015012-25015312   161 2/1322
+NC_037112.1:25015012-25015312   163 801,6/1322
+NC_037112.1:28278997-28279297   125 256/1326
+NC_037112.1:28278997-28279297   151 508/1324
+NC_037112.1:28296342-28296642   130 11/1324
+NC_037112.1:28296342-28296642   149 467/1324
+NC_037112.1:28296342-28296642   150 77/1308
+NC_037112.1:28296342-28296642   151 482/1324
+NC_037112.1:28296342-28296642   165 15/1324
+NC_037112.1:28320487-28320787   126 53/1322
+NC_037112.1:28320487-28320787   128 39/1322
+NC_037112.1:28320487-28320787   137 831/1318
+NC_037112.1:28320487-28320787   151 540/1322
+NC_037112.1:28350510-28350810   116 22/1322
+NC_037112.1:28350510-28350810   141 1170/1322
+NC_037112.1:28350510-28350810   151 530/1322
+NC_037112.1:28350510-28350810   163 363/1322
+NC_037121.1:6243491-6243791 151 474/1324
+NC_037121.1:6268440-6268740 151 448/1318
+
+# So, some of them are quite rare, but let's go ahead and keep
+# those in there...That is still fewer than two variants per
+# amplicon, on average.
+
+# Finally, let's make a VCF file with only one individual in it
+# to use for our microhaplot VCF:
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% bcftools view -i 'F_MISSING < 0.03' $WRAP | bcftools view -s T170774  > config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf
+```
+
+Now, to add that into the workflow, let’s request another set of
+canonical variation in the Chinook config:
+
+``` yaml
+WRAP:
+    genome:
+      Otsh_v1.0:
+        regions: config/Chinook/regions/WRAP-Otsh_v1.0.txt
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
+          after_5_runs: config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf  <--- this line added
+  
+```
+
+After that, invoking Snakemake will see that there are new microhap
+variants for things to be run at, if there are any WRAP fish in the run.
+Cool\!
+
+# “Post-hoc” Rules
+
+## multi\_dir\_variant\_calling.smk
+
+This is a recently added rule that lets one quickly call variants from
+muliple runs together. The inspiration for this came from the
+possibility of a situtation where run A might include individuals from
+only one population of a species and run B might include individuals
+from only a different population. If these pops happen to be fixed for
+different variants, then those will never show up in the VCFs, unless
+all them are run together. So, this rule is there to allow the user to
+easily call variation from previously created BAMs. It *does not* use
+any sample sheet information to figure out which individuals should be
+included. Rather it just globs the existing BAM files for each marker
+set that have already been run. Not only that, but it currently requires
+the user to set up the directory for the outputs to be run in, and also
+a file that lists the input run directories. And the user has to request
+the output target with the correct file path, etc.
 
 # Development related stuff. Will be cleaned up later.
 
@@ -237,13 +444,14 @@ marker_sets:
         regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
+          after_5_runs: config/Chinook/canonical_variation/LFAR-8-amplicons-22-variants.vcf
   WRAP:
     genome:
       Otsh_v1.0:
         regions: config/Chinook/regions/WRAP-Otsh_v1.0.txt
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
-
+          after_5_runs: config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf
   ROSA:
     target_fasta:
       rosawr:
