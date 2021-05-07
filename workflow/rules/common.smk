@@ -252,3 +252,45 @@ def requested_microhap_outputs_from_units_and_config():
 
 
 
+# generalized version: trunk should be like, vcf of idxstats, etc.
+# filename should be the filename..
+
+# from unit.csv (now available in gf_units and tf_units) get all the different
+# vcf outputs that we should be expecting.  This means cycling over all the
+# different genomes and target_fasta seqs in config, as well.
+# BIG NOTE: This is explicitly for creating VCFs from the bams.  These VCFs will
+# then be available to merge and define new "canonical" variation. But they
+# are not directly used to feed into the microhaplot or SNP-yanking sections
+# of the workflow.
+def requested_outputs_from_units_and_config(trunk, filename):
+    """get list of vcf outputs we expect from the units and the config file"""
+    # start with the genome-focused ones
+    # here are the unique marker sets called for:
+    MS = list(set(list(gf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    gf = list()
+    for m in MS:
+        # list of full genomes they are associated with
+        g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
+        gf = gf + expand("{rd}/{sd}/{tr}/fullg-extracted/{ms}/{g}/{fn}", rd = config["run_dir"], sd = config["species"], tr = trunk, ms = m, g = g, fn = filename)
+    # then do the target-fasta focused ones
+    MS = list(set(list(tf_units["Markers"])))
+    # now, expand each of those by the specific target-fasta seqs they might be associated with
+    tf = list()
+    for m in MS:
+        # list of target-fasta fastas they are associated with
+        t = [str(k) for k in config["marker_sets"][m]["target_fasta"].keys()]
+        tf = tf + expand("{rd}/{sd}/{tr}/target_fastas/{ms}/{t}/{fn}", rd = config["run_dir"], sd = config["species"], tr = trunk, ms = m, t = t, fn = filename)
+    # then, also do the genome-focused ones that have been extracted and remapped to the
+    # thinned genomes.    
+    MS = list(set(list(gf_units["Markers"])))
+    # now, expand each of those by the genomes they might be associated with
+    gfex = list()
+    for m in MS:
+        # list of full genomes they are associated with
+        g = [str(k) for k in config["marker_sets"][m]["genome"].keys()]
+        gfex = gfex + expand("{rd}/{sd}/{tr}/fullgex_remapped_to_thinned/{ms}/{g}/{fn}", rd = config["run_dir"], sd = config["species"], tr = trunk, ms = m, g = g, fn = filename)
+
+    return gf + gfex + tf
+
+

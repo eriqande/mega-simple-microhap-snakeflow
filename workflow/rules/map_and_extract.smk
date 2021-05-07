@@ -47,7 +47,7 @@ rule extract_reads_from_full_genomes:
   output:
     bam="{run_dir}/{species_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
     bai="{run_dir}/{species_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai",
-    idx="{run_dir}/{species_dir}/idxstats/fullg-extracted/{marker_set}/{genome}/{sample}_idxstats.txt",
+    idx=temp("{run_dir}/{species_dir}/idxstats/fullg-extracted/{marker_set}/{genome}/{sample}_idxstats.txt"),
   shell:
     " samtools view -u {input.bam} $(cat {input.regfile})  2> {log} |  "
     " samtools sort -T {wildcards.run_dir}/{wildcards.species_dir}/bams/fullg-extracted/{wildcards.marker_set}/{wildcards.genome}/{wildcards.sample} "
@@ -77,7 +77,7 @@ rule map_to_target_fastas:
     bam="{run_dir}/{species_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam",
     bai="{run_dir}/{species_dir}/bams/target_fastas/{marker_set}/{target_fasta}/{sample}.bam.bai",
     sam="{run_dir}/{species_dir}/sams/target_fastas/{marker_set}/{target_fasta}/{sample}.sam",
-    idx="{run_dir}/{species_dir}/idxstats/target_fastas/{marker_set}/{target_fasta}/{sample}_idxstats.txt",
+    idx=temp("{run_dir}/{species_dir}/idxstats/target_fastas/{marker_set}/{target_fasta}/{sample}_idxstats.txt"),
   shell:
     "bwa mem -R '{params.rg}' {input.g} {input.EF}  2> {log.bwa} | "
     " samtools view -u -  2> {log.samtools} |  "
@@ -155,7 +155,7 @@ rule map_fullg_extracted_to_thinned_genomes:
     bam="{run_dir}/{species_dir}/bams/fullgex_remapped_to_thinned/{marker_set}/{genome}/{sample}.bam",
     bai="{run_dir}/{species_dir}/bams/fullgex_remapped_to_thinned/{marker_set}/{genome}/{sample}.bam.bai",
     sam="{run_dir}/{species_dir}/sams/fullgex_remapped_to_thinned/{marker_set}/{genome}/{sample}.sam",
-    idx="{run_dir}/{species_dir}/idxstats/fullgex_remapped_to_thinned/{marker_set}/{genome}/{sample}_idxstats.txt",
+    idx=temp("{run_dir}/{species_dir}/idxstats/fullgex_remapped_to_thinned/{marker_set}/{genome}/{sample}_idxstats.txt"),
   shell:
     "bwa mem -R '{params.rg}' {input.g} {input.EF}  2> {log.bwa} | "
     " samtools view -u -  2> {log.samtools} |  "

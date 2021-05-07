@@ -4,8 +4,9 @@ include: "rules/common.smk"
 ##### Target Rules #####
 
 rule all:
-  input:
-    requested_vcfs_from_units_and_config(),
+	input:
+		requested_outputs_from_units_and_config("idxstats", "SamplesCatenated.txt"),
+		requested_vcfs_from_units_and_config(),
     #requested_microhap_outputs_from_units_and_config()
 
 
@@ -18,6 +19,7 @@ include: "rules/map_and_extract.smk"
 include: "rules/variant_calling.smk"
 include: "rules/microhaplot.smk"
 include: "rules/multi_dir_variant_calling.smk"
+include: "rules/idxstats.smk"
 
 
 
