@@ -49,7 +49,7 @@ marker_sets:
         regions: config/Chinook/regions/WRAP-Otsh_v1.0.txt
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
-
+          after_5_runs: config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf
   ROSA:
     target_fasta:
       rosawr:
