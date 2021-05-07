@@ -57,6 +57,20 @@ your computer) downloading the Otsh_v1.0 genome and indexing it with
 bwa.
 
 
+## Production runs
+
+Here is an idea of how a production-run command line might look for five directories.
+After checking out a node with 20 cores...
+```sh
+for i in data/200715_M02749_0092_000000000-CV34F \
+    data/201012_M02749_0095_000000000-CWHDK \
+    data/210129_M02749_0102_000000000-J33JD \
+    data/200828_M02749_0093_000000000-CV2FP \
+    data/201019_M02749_0096_000000000-CV34D; do
+    snakemake --config run_dir=$i --configfile config/Chinook/config.yaml --use-conda --use-envmodules --cores 20
+done
+    
+```
 
 
 # "Post-hoc" Rules
