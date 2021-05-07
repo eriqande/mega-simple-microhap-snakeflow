@@ -14,6 +14,7 @@ rule multi_dir_call_fullgex_remapped_markers_with_bcftools:
     call="MULTI_RUN_RESULTS/{multi_run_dir}/{species_dir}/logs/call_fullgex_remapped_markers_with_bcftools/bcftools_call-{marker_set}-{genome}.log",
     sort="MULTI_RUN_RESULTS/{multi_run_dir}/{species_dir}/logs/call_fullgex_remapped_markers_with_bcftools/bcftools_sort-{marker_set}-{genome}.log",
     norm="MULTI_RUN_RESULTS/{multi_run_dir}/{species_dir}/logs/call_fullgex_remapped_markers_with_bcftools/bcftools_norm-{marker_set}-{genome}.log"
+  threads: 6
   conda:
     "../envs/bcftools.yaml"
   output:
