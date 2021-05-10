@@ -5,6 +5,8 @@ mega-simple-microhap-snakeflow
   - [Multi-run variant calling](#multi-run-variant-calling)
       - [Making a VCF for microhaplot after multi-run variant
         calling](#making-a-vcf-for-microhaplot-after-multi-run-variant-calling)
+      - [A word on getting those files off a remote
+        server](#a-word-on-getting-those-files-off-a-remote-server)
   - [“Post-hoc” Rules](#post-hoc-rules)
       - [multi\_dir\_variant\_calling.smk](#multi_dir_variant_calling.smk)
   - [Development related stuff. Will be cleaned up
@@ -274,6 +276,83 @@ WRAP:
 After that, invoking Snakemake will see that there are new microhap
 variants for things to be run at, if there are any WRAP fish in the run.
 Cool\!
+
+### A word on getting those files off a remote server
+
+If we just did 5 runs worth of microhaplot for LFAR and WRAP, the
+results would be found in directories like this:
+
+``` sh
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% pwd
+/home/eanderson/Documents/git-repos/mega-simple-microhap-snakeflow
+(snakemake) [node11: mega-simple-microhap-snakeflow]--% ls data/*/Chinook/microhaplot/*after_5*
+data/200715_M02749_0092_000000000-CV34F/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/200715_M02749_0092_000000000-CV34F/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/200828_M02749_0093_000000000-CV2FP/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/200828_M02749_0093_000000000-CV2FP/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/200828_M02749_0093_000000000-CV2FP/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/200828_M02749_0093_000000000-CV2FP/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/201012_M02749_0095_000000000-CWHDK/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/201012_M02749_0095_000000000-CWHDK/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/201019_M02749_0096_000000000-CV34D/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/201019_M02749_0096_000000000-CV34D/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/210129_M02749_0102_000000000-J33JD/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/210129_M02749_0102_000000000-J33JD/Chinook/microhaplot/LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+data/210129_M02749_0102_000000000-J33JD/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+data/210129_M02749_0102_000000000-J33JD/Chinook/microhaplot/WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+```
+
+They all have the same name, so it is the directory structure that
+distinguishes them. To get these all to your laptop, rsync with the R
+option is your friend (and you can test with the `-n` dry-run option
+before doing it):
+
+``` sh
+ rsync -avR eanderson@sedna.nwfsc2.noaa.gov:'/home/eanderson/Documents/git-repos/mega-simple-microhap-snakeflow/./data/*/Chinook/microhaplot/*-after_5_*' ./
+```
+
+Note the use of the single quotes to avoid expanding the wildcards on
+the local machine, and instead send them to the remote machine. And
+*also* note the `.` in: `mega-simple-microhap-snakeflow/./data`. That
+tells rsync to only include the part of the path to the left of the dot.
+Cool\! After running the above command, we have:
+
+``` sh
+(base) /from_cluster/--% (master)  tree .
+.
+└── data
+    ├── 200715_M02749_0092_000000000-CV34F
+    │   └── Chinook
+    │       └── microhaplot
+    │           ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+    │           └── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+    ├── 200828_M02749_0093_000000000-CV2FP
+    │   └── Chinook
+    │       └── microhaplot
+    │           ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+    │           ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+    │           ├── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+    │           └── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+    ├── 201012_M02749_0095_000000000-CWHDK
+    │   └── Chinook
+    │       └── microhaplot
+    │           ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+    │           └── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+    ├── 201019_M02749_0096_000000000-CV34D
+    │   └── Chinook
+    │       └── microhaplot
+    │           ├── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+    │           └── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+    └── 210129_M02749_0102_000000000-J33JD
+        └── Chinook
+            └── microhaplot
+                ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+                ├── LFAR--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+                ├── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs.rds
+                └── WRAP--fullgex_remapped_to_thinned--Otsh_v1.0--after_5_runs_posinfo.rds
+
+16 directories, 14 files
+```
 
 # “Post-hoc” Rules
 
