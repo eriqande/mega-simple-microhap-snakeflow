@@ -1,0 +1,51 @@
+species: Coho
+
+#run_dir: .test/data  # set it on the command line to the directory in which raw, samples.csv, and units.csv reside
+
+# the following are names of files that are assumed to be
+# within the run_dir.  NOTE! These names might be hardwired
+# in extract_microhaplotypes.R.  Don't change these...
+samples: samples.csv
+units: units.csv
+
+
+# here we give details about our marker sets.  Note that a marker
+# set can be both genome-focused and target_fasta-focused, as
+# I have done with ROSA here, just for an example.
+
+# Note also that we have allowed for two different target_fastas
+# for ROSA which will give us two different possible ROSA sets, possibly.
+# It seemed like that would be good in order to test different
+# target_fastas side-by-side, etc.
+
+# Also, each target_fasta is assumed to belong to only one marker_set,
+# but a particular full genome can belong to multiple marker sets.
+
+# And we can map a marker set to more than one full genome...as the
+# LFAR example with a genome called "nookie2" shows.
+
+# But, also note that we can have multiple variant sets for each genome
+# within a genome-focused marker set.
+
+# The "variants" field is reserved only for the canonical SNP-sets that we would
+# use to call specific variants.  Not for finding new variants, etc.
+marker_sets:
+  COHO:
+    target_fasta:
+      coho163:
+        fasta: config/Coho/target_fastas/CohoRef_SNPsAndMHaps_163.fasta
+        microhap_variants:
+          single_snps: config/Coho/canonical_variation/Coho_JustTargetSNPs_77.recode.vcf
+          all_variants: config/Coho/canonical_variation/CohoRefVCF_May2021_sorted.vcf
+
+
+
+
+
+
+
+
+
+
+
+
