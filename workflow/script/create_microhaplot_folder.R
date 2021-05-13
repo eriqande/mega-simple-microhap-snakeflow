@@ -15,7 +15,7 @@ if(!("remotes" %in% inst_packs)) {
 	message("Installing the remotes package")
 	install.packages("remotes", repos = "http://cran.rstudio.com")
 }
-message("Installing microhaplot")
+message("Installing microhaplotextract")
 remotes::install_github(
 	"eriqande/microhaplot",
 	ref = "just-for-extracting",
@@ -24,7 +24,7 @@ remotes::install_github(
 	upgrade = "never" 
 )
 
-microhaplot::mvShinyHaplot(run_dir)
+microhaplotextract::mvShinyHaplot(run_dir)
 
 # get rid of the microhaplot example files:
 file.remove(

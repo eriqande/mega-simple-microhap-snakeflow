@@ -17,7 +17,7 @@ num_threads <- snakemake@threads[1]
 
 
 library(tidyverse)
-library(microhaplot)
+library(microhaplotextract)
 
 # get the short file names for the sams, in a tibble
 sams_tibble <- tibble(
