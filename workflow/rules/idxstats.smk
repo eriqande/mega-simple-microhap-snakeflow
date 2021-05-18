@@ -46,3 +46,22 @@ rule combine_target_fasta_idxstats_into_single_file:
   	" awk -v S=$k  'BEGIN {{OFS=\"\\t\"}} {{print S,$0}}'  $i;  done | "
   	" awk '$2 == \"*\" {{next}} {{print}}' > {output} 2> {log} "
 
+
+# a rule to create tabular and graphical summaries from the SamplesCatenated.txt
+# I have a few new wildcards here that I should have used from the beginning:
+# map_type = fullgex_remapped_to_thinned, fullg-extracted, target_fastas
+# tf_or_gen = "the value that would go into the target_fasta or genome wildcards"
+rule summarise_idxstats:
+  input:
+    "{run_dir}/{species_dir}/idxstats/{map_type}/{marker_set}/{tf_or_gen}/SamplesCatenated.txt"
+  output:
+    csv = "{run_dir}/{species_dir}/idxstats/{map_type}/{marker_set}/{tf_or_gen}/ordered-read-counts-table.csv",
+    heatmap = "{run_dir}/{species_dir}/idxstats/{map_type}/{marker_set}/{tf_or_gen}/read-counts-heatmap.pdf",
+    samp_bars = "{run_dir}/{species_dir}/idxstats/{map_type}/{marker_set}/{tf_or_gen}/read-counts-samples.pdf",
+    marker_bars = "{run_dir}/{species_dir}/idxstats/{map_type}/{marker_set}/{tf_or_gen}/read-counts-markers.pdf",
+  log:
+    "{run_dir}/{species_dir}/logs/summarise_idxstats/{map_type}/{marker_set}/{tf_or_gen}/log.txt"
+  envmodules:
+    "R/4.0.3" 
+  script:
+    "../script/summarize-idxstats.R"
