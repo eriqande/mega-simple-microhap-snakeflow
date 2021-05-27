@@ -51,6 +51,12 @@ marker_sets:
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
           after_5_runs: config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf
+  VGLL3SIX6:
+    genome:
+      Otsh_v1.0:
+        regions: config/Chinook/regions/VGLL3SIX6-Otsh_v1.0.txt
+      microhap_variants:
+        single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
   ROSA:
     target_fasta:
       rosawr:
@@ -69,6 +75,7 @@ marker_sets:
         fasta: config/Chinook/target_fastas/chinook_84amps.fasta
         microhap_variants:
           single_snps: config/Chinook/canonical_variation/chinook_84amps_single_targets.vcf
+
 
 
 
