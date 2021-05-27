@@ -1,6 +1,9 @@
 mega-simple-microhap-snakeflow
 ================
 
+  - [Quick Start](#quick-start)
+  - [Inputs](#inputs)
+      - [`SampleSheet.csv`](#samplesheet.csv)
   - [Production runs](#production-runs)
   - [Multi-run variant calling](#multi-run-variant-calling)
       - [Making a VCF for microhaplot after multi-run variant
@@ -36,24 +39,47 @@ mega-simple-microhap-snakeflow
       - [Handling units and samples](#handling-units-and-samples)
   - [Genomes and target\_fastas](#genomes-and-target_fastas)
 
-This repository holds the Snakefile and associated files for Eric’s
-first attempt (still under construction\!) at making a SnakeMake-based
-workflow for our microhaplotypes.
+This repository holds the Snakemake-based workflow for implementing the
+**M**olecular **E**cology and **G**enetic **A**nalysis Team’s **Simple**
+**Microhaplotyping** workflow. Hence the name,
+*mega-simple-microhap-snakeflow*. It was written and is maintained by
+Eric C. Anderson at NOAA’s Southwest Fisheries Science Center with input
+and assistance from Anthony Clemento and Ellen Campbell. This is a
+workflow to provide genotypes of individual fish (or other organisms) at
+microhaplotypes associated with different sets of amplicons. It is
+configurable to be able to work with different species, different marker
+sets, and different ways in which the marker-set reference sequences are
+specified.
 
-It is near completion. To try it out on the test data:
+The development and Snakemake code within this workflow isn’t entirely
+“mega-simple.” There are a couple of features of the code/wildcarding
+that could be streamlined, and might be at some point. Nonetheless, once
+all the configurations are in place for a given species and all of the
+different panels of amplicons associated with it, it is pretty simple to
+run it.
+
+## Quick Start
+
+If you just want to get the workflow and run the included, small, test
+data set on your own laptop or cluster, here are the steps:
 
 1.  Get this repository with something like `git clone
     https://github.com/eriqande/mega-simple-microhap-snakeflow.git`
 
-2.  Make sure you have Miniconda installed.
+2.  Make sure that you have R installed and that you have successfully
+    installed the packages `tidyverse` and `remotes`. (We have not found
+    a way to use a conda-maintained R installation that works for our
+    purposes here).
 
-3.  Get a full install of a Snakemake conda environment by following the
+3.  Make sure you have Miniconda installed.
+
+4.  Get a full install of a Snakemake conda environment by following the
     directions
     [here](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
-4.  Activate that snakemake conda environment
+5.  Activate that snakemake conda environment
 
-5.  From within the `mega-simple-microhap-snakeflow` directory give this
+6.  From within the `mega-simple-microhap-snakeflow` directory give this
     command:
     
     ``` sh
@@ -83,7 +109,7 @@ It is near completion. To try it out on the test data:
     This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.
     ```
 
-6.  If that worked, you can do a full run with this:
+7.  If that worked, you can do a full run with this:
     
     ``` sh
     snakemake --config run_dir=.test/data --configfile config/Chinook/config.yaml  --use-conda --cores 1
@@ -94,6 +120,67 @@ It is near completion. To try it out on the test data:
     bit of time (30 minute to a couple hours, depending on the speed of
     your computer) downloading the Otsh\_v1.0 genome and indexing it
     with bwa.
+
+## Inputs
+
+Assuming that you are running some sequencing data for a species that is
+already configured (meaning that the reference genomes and target
+regions are specified), then all you need to worry about is the
+sequencing and meta data input that you must provide. (This will be the
+case if you are using amplicons and specifications developed at the
+SWFSC).
+
+The basic idea of the workflow is that input data (both sequences and
+meta data) from any single MiSeq run (or, presumably a run on a
+different sequencing platform) are provided in a single directory with
+fairly strict formatting guidelines. The workflow then proceeds upon
+those data, and, in the process, populates that input directory with a
+number of additional directories containing outputs and some
+intermediate files.
+
+For example, the directory `.test/data` in the repository is this sort
+of input directory. It is obviously a pared-down version of a typical
+sequencing run which might include hundreds of individuals, but it
+serves out illustrative purposes here, nonetheless.
+
+In order for the snakemake-based workflow to run upon such a directory,
+it must have the following elements
+
+1.  A directory `raw` that includes only the paired-end FASTQ files from
+    the sequencing.
+2.  A file `samples.csv` (described below) that includes one line for
+    each sample giving information about the path to the FASTQ file that
+    originated from each sample, additional identifiers for the sample,
+    and also the names of the amplicon panels at which the the sample
+    was amplified.
+3.  A file `units.csv` (also described below) that has a single line for
+    each combination of a sample and an amplicon panel / marker set.
+
+It is also good practice to have an additional file called `meta.csv`
+that includes additional meta data for each sample in `samples.csv`;
+however this is not a requirement.
+
+In our workflow at the SWFSC the `samples.csv` and `units.csv` file are
+generated from the the sample sheet associated with the sequencing run
+using the included R script in
+`preprocess/sample-sheet-processing-functions.R`. This is the
+recommended way to obtain `samples.csv` and `units.csv`, and is the only
+way that we will document that here. Therefore, in practice, each user
+should plan to start with input data from the sequencer that includes:
+
+1.  The directory `raw` that includes only the paired-end FASTQ files
+    from the sequencing.
+2.  A file named `SampleSheet.csv` that includes information about the
+    samples that were included on the sequencing run.
+
+The key to making sure all of this will run smoothly is to be strict
+about the formatting and contents of `SampleSheet.csv` which are
+described in the next section.
+
+### `SampleSheet.csv`
+
+The example `SampleSheet.csv` that comes with the small test data set
+with the repository can be most easily viewed at this link:
 
 ## Production runs
 
@@ -531,6 +618,12 @@ marker_sets:
         microhap_variants:
           all_variants: config/Chinook/canonical_variation/WRAP-all-snps-round-1.vcf
           after_5_runs: config/Chinook/canonical_variation/WRAP-24-amplicons-53-variants.vcf
+  VGLL3SIX6:
+    genome:
+      Otsh_v1.0:
+        regions: config/Chinook/regions/VGLL3SIX6-Otsh_v1.0.txt
+      microhap_variants:
+        single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
   ROSA:
     target_fasta:
       rosawr:
@@ -549,6 +642,7 @@ marker_sets:
         fasta: config/Chinook/target_fastas/chinook_84amps.fasta
         microhap_variants:
           single_snps: config/Chinook/canonical_variation/chinook_84amps_single_targets.vcf
+
 
 
 
