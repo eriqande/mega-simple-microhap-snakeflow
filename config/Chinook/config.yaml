@@ -55,8 +55,8 @@ marker_sets:
     genome:
       Otsh_v1.0:
         regions: config/Chinook/regions/VGLL3SIX6-Otsh_v1.0.txt
-      microhap_variants:
-        single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
+        microhap_variants:
+          single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
   ROSA:
     target_fasta:
       rosawr:
