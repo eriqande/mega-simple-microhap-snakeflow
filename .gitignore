@@ -24,3 +24,6 @@ README.html
 dag.svg
 filegraph.svg
 rulegraph.svg
+MULTI_RUN_RESULTS
+*.fai
+
