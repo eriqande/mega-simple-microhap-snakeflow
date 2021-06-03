@@ -1,4 +1,7 @@
-
+# redirect output and messages/errors to the log
+log <- file(snakemake@log[[1]], open="wt")
+sink(log, type = "output")
+sink(log, type = "message")
 
 # get the run_dir,  and then create a microhaplot directory
 # there with the Shiny elements in it.
