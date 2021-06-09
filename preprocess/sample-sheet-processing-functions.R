@@ -12,6 +12,7 @@ create_samples_and_units <- function(path) {
 
   # first make and retain only the columns we will need going forward
   S <- read_csv(path, skip = skip) %>%
+    filter(!is.na(Sample_ID)) %>%  # if there were empty lines included in the file, toss them this way
     mutate(
       NMFS_DNA_ID = str_split_fixed(Sample_Plate, "_", n = 3)[,1],
       sample = str_c("s", sprintf("%04d", 1:n()))
