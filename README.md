@@ -2,8 +2,10 @@ mega-simple-microhap-snakeflow
 ================
 
   - [Quick Start](#quick-start)
+  - [Rulegraph](#rulegraph)
   - [Inputs](#inputs)
       - [`SampleSheet.csv`](#samplesheet.csv)
+      - [samples.csv and units.csv](#samples.csv-and-units.csv)
   - [Production runs](#production-runs)
   - [Multi-run variant calling](#multi-run-variant-calling)
       - [Making a VCF for microhaplot after multi-run variant
@@ -14,7 +16,7 @@ mega-simple-microhap-snakeflow
       - [multi\_dir\_variant\_calling.smk](#multi_dir_variant_calling.smk)
   - [Development related stuff. Will be cleaned up
     later.](#development-related-stuff.-will-be-cleaned-up-later.)
-      - [samples.csv and units.csv](#samples.csv-and-units.csv)
+      - [samples.csv and units.csv](#samples.csv-and-units.csv-1)
       - [The config file](#the-config-file)
   - [Notes on Development](#notes-on-development)
       - [Some python that is good to
@@ -121,6 +123,21 @@ data set on your own laptop or cluster, here are the steps:
     your computer) downloading the Otsh\_v1.0 genome and indexing it
     with bwa.
 
+## Rulegraph
+
+No snakemake workflow description is complete without a quick DAG
+showing all the different rules. Here it is for the test data set
+obtained with:
+
+``` sh
+snakemake --config run_dir=.test/data \
+          --configfile config/Chinook/config.yaml  \
+          --rulegraph | \
+   dot -Tsvg > rulegraph.svg
+```
+
+<img src="images_for_readme/rulegraph.svg" width="100%" />
+
 ## Inputs
 
 Assuming that you are running some sequencing data for a species that is
@@ -180,7 +197,77 @@ described in the next section.
 ### `SampleSheet.csv`
 
 The example `SampleSheet.csv` that comes with the small test data set
-with the repository can be most easily viewed at this link:
+with the repository can be most easily viewed on GitHub
+[here](https://github.com/eriqande/mega-simple-microhap-snakeflow/blob/main/.test/data/SampleSheet.csv).
+
+As you can see, there are a bunch of header/preamble lines in it that
+are part of the standard MiSeq output. The functions in
+`preprocess/sample-sheet-processing-functions.R` find the start of the
+data section by finding the line that starts with `[Data]`. So, if your
+file doesn’t have that, it won’t work\!
+
+As currently configured, the scripts in
+`preprocess/sample-sheet-processing-functions.R` are setup for our own
+conventions and things. Just go ahead and look at the functions to
+understand what is going on there. For our purposes at the SWFSC, we
+have these conventions:
+
+  - Our NMFS\_DNA\_ID is the part before the first underscore in the
+    `Sample_Plate` column.
+
+  - The marker sets to process each individual (row) at is given as a
+    comma-separated (white space around the commas is stripped) series
+    of marker-set names in the `Description` column.
+
+  - The `Sample_Name` column *must* give the identifier of the
+    individual that forms the beginning of the name of its fastq files
+    in raw. In particular, if YYYYYYY is the entry for the individual in
+    the `Sample_Name` column, then its paired-end fastq files stored in
+    the `raw` directory *must* match the regular expressions:
+    
+    ``` sh
+    YYYYYYY_.*_L00[0-9]_R1_00[0-9].fastq.gz
+    
+    and 
+    
+    YYYYYYY_.*_L00[0-9]_R2_00[0-9].fastq.gz
+    ```
+    
+    Entries in the `Sample_Name` *must not* have any underscores in
+    them. The letters before the first underscore in the fastq file name
+    is used to match each entry in the `Sample_Name` column to its fastq
+    files.
+
+### samples.csv and units.csv
+
+In our workflows, these are produced from the SampleSheet.csv file using
+the `create_samples_and_units()` function defined in
+`preprocess/sample-sheet-processing-functions.R` like this, in R with
+the working directory set to the top level of the workflow repository:
+
+``` r
+source("preprocess/sample-sheet-processing-functions.R")
+create_samples_and_units(".test/data/SampleSheet.csv")
+```
+
+It is pretty straighforward. If you are trying to process a
+`SampleSheet.csv` that lives in a directory `mypath/mydir` then you
+simply do:
+
+``` r
+source("preprocess/sample-sheet-processing-functions.R")
+create_samples_and_units("mypath/mydir/SampleSheet.csv")
+```
+
+and that will create `samples.csv` and `units.csv` in the directory
+`mypath/mydir` alongside `SampleSheet.csv`.
+
+If you are going to make `samples.csv` and `units.csv` yourself here are
+some examples so you can see their structure and what you need to put in
+them:
+[samples.csv](https://github.com/eriqande/mega-simple-microhap-snakeflow/blob/main/.test/data/samples.csv)
+and
+[units.csv](https://github.com/eriqande/mega-simple-microhap-snakeflow/blob/main/.test/data/units.csv).
 
 ## Production runs
 
@@ -622,8 +709,8 @@ marker_sets:
     genome:
       Otsh_v1.0:
         regions: config/Chinook/regions/VGLL3SIX6-Otsh_v1.0.txt
-      microhap_variants:
-        single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
+        microhap_variants:
+          single_snps: config/Chinook/canonical_variation/VGLL3SIX6-initial-sites.vcf
   ROSA:
     target_fasta:
       rosawr:
