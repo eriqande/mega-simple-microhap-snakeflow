@@ -1,0 +1,58 @@
+species: Mykiss
+
+run_dir: .test/data  # set it on the command line to the directory in which raw, samples.csv, and units.csv reside
+
+# the following are names of files that are assumed to be
+# within the run_dir.  NOTE! These names might be hardwired
+# in extract_microhaplotypes.R.  Don't change these...
+samples: samples.csv
+units: units.csv
+
+# set genomes up to be downloaded from url.  They will
+# be placed in resources/{species_dir}/genomes/name_of_genome/name_of_genome.fna
+# where name_of_genome is like Otsh_v1.0
+genomes:
+  Omyk_1.0:
+    url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/163/495/GCA_002163495.1_Omyk_1.0/GCA_002163495.1_Omyk_1.0_genomic.fna.gz
+
+
+# here we give details about our marker sets.  Note that a marker
+# set can be both genome-focused and target_fasta-focused, as
+# I have done with ROSA here, just for an example.
+
+# Note also that we have allowed for two different target_fastas
+# for ROSA which will give us two different possible ROSA sets, possibly.
+# It seemed like that would be good in order to test different
+# target_fastas side-by-side, etc.
+
+# Also, each target_fasta is assumed to belong to only one marker_set,
+# but a particular full genome can belong to multiple marker sets.
+
+# And we can map a marker set to more than one full genome...as the
+# LFAR example with a genome called "nookie2" shows.
+
+# But, also note that we can have multiple variant sets for each genome
+# within a genome-focused marker set.
+
+# The "variants" field is reserved only for the canonical SNP-sets that we would
+# use to call specific variants.  Not for finding new variants, etc.
+marker_sets:
+  MYK_CRTFC_67:
+    genome:
+      Omyk_1.0:
+        regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
+          after_5_runs: config/Chinook/canonical_variation/LFAR-8-amplicons-22-variants.vcf
+ 
+
+
+
+
+
+
+
+
+
+
+
