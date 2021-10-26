@@ -115,7 +115,7 @@ def rg_from_sample(wildcards):
     )
 
 def fna_from_marker_set_and_target_fasta(wildcards):
-    """get path to a target fasta"""
+    """get path to a target fasta stored in the Config."""
     return config["marker_sets"][wildcards.marker_set]["target_fasta"][wildcards.target_fasta]["fasta"]
 
 

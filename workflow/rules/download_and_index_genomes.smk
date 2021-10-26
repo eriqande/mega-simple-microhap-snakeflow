@@ -44,18 +44,19 @@ rule bwt_index_genome:
 
 
 # we also need to bwa index the target fastas
-rule bwt_index_target_fasta:
+rule copy_and_index_target_fasta:
   input:
     fna=fna_from_marker_set_and_target_fasta
   log:
     "resources/{species_dir}/logs/bwt_index_target_fasta/{marker_set}/{target_fasta}.log"
   conda:
-    "../envs/bwa.yaml"
+    "../envs/bwasam.yaml"
   output:
     fna="resources/{species_dir}/target_fastas/{marker_set}/{target_fasta}/ref.fna",
-    exts=multiext("resources/{species_dir}/target_fastas/{marker_set}/{target_fasta}/ref.fna", ".amb", ".ann", ".bwt", ".pac", ".sa")
+    exts=multiext("resources/{species_dir}/target_fastas/{marker_set}/{target_fasta}/ref.fna", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai")
   shell:
     " cp {input.fna} {output.fna}; "
+    " samtools faidx {output.fna}; "
     " bwa index {output.fna}  2> {log} "
 
 

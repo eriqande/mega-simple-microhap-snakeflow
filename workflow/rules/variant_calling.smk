@@ -6,6 +6,7 @@ rule call_fullg_marker_sets_with_bcftools:
   input:
     bams= lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "fullg", trunk = "bams", ext = ".bam"), #fullg_bam_inputs_for_calling_from_marker_set_and_genome,
     fna="resources/{species_dir}/genomes/{genome}/{genome}.fna",
+    fai="resources/{species_dir}/genomes/{genome}/{genome}.fna.fai",
     bed="resources/{species_dir}/bedfiles/fullg/{marker_set}-{genome}.bed"
   log:
     mpileup="{run_dir}/{species_dir}/logs/call_fullg_marker_sets_with_bcftools/bcftools_mpileup-{marker_set}-{genome}.log",
@@ -24,7 +25,8 @@ rule call_fullg_marker_sets_with_bcftools:
 rule call_target_fasta_marker_sets_with_bcftools:
   input:
     bams=  lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "target_fasta", trunk = "bams", ext = ".bam"), #target_fasta_bam_inputs_for_calling_from_marker_set_and_fasta,
-    fna=fna_from_marker_set_and_target_fasta
+    fna="resources/{species_dir}/target_fastas/{marker_set}/{target_fasta}/ref.fna",
+    fai="resources/{species_dir}/target_fastas/{marker_set}/{target_fasta}/ref.fna.fai",
   log:
     mpileup="{run_dir}/{species_dir}/logs/call_target_fasta_marker_sets_with_bcftools/bcftools_mpileup-{marker_set}-{target_fasta}.log",
     call="{run_dir}/{species_dir}/logs/call_target_fasta_marker_sets_with_bcftools/bcftools_call-{marker_set}-{target_fasta}.log",
@@ -43,6 +45,7 @@ rule call_fullgex_remapped_markers_with_bcftools:
   input:
     bams= lambda wc: bam_tree_equivalent_files_from_marker_sets(wc, type = "fullgex_remapped", trunk = "bams", ext = ".bam"), #fullg_bam_inputs_for_calling_from_marker_set_and_genome,
     fna="resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna",
+    fai="resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna.fai"
   log:
     mpileup="{run_dir}/{species_dir}/logs/call_fullgex_remapped_markers_with_bcftools/bcftools_mpileup-{marker_set}-{genome}.log",
     call="{run_dir}/{species_dir}/logs/call_fullgex_remapped_markers_with_bcftools/bcftools_call-{marker_set}-{genome}.log",

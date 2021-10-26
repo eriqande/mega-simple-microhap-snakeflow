@@ -23,8 +23,7 @@ rule region_bedfiles_full:
 rule make_thinned_genomes:
   input:
     regfile=region_files_from_marker_set_and_genome,
-    fa="resources/{species_dir}/genomes/{genome}/{genome}.fna",
-    fai="resources/{species_dir}/genomes/{genome}/{genome}.fna.fai"
+    fa="resources/{species_dir}/genomes/{genome}/{genome}.fna"
   log:
     faidx="resources/{species_dir}/logs/make_thinned_genomes/faidx-{marker_set}-{genome}.log",
     bwaidx="resources/{species_dir}/logs/make_thinned_genomes/bwa_index-{marker_set}-{genome}.log"
@@ -34,7 +33,7 @@ rule make_thinned_genomes:
   conda:
     "../envs/bwasam.yaml"
   output:
-    idx_files=multiext("resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa"),
+    idx_files=multiext("resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna", ".bwt", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
     fa="resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna"
   shell:
     "samtools faidx {input.fa} $(cat {input.regfile}) > {output.fa} 2> {log.faidx}; "
