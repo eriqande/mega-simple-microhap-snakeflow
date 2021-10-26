@@ -8,6 +8,14 @@ run_dir: .test/data  # set it on the command line to the directory in which raw,
 samples: samples.csv
 units: units.csv
 
+# set to true on the command line if you want to use it
+use_trimmomatic: False
+
+# here are some parameters and things for trimmomatic trimming,
+# for the way that Jeff Rodzen does it.
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
+
 # set genomes up to be downloaded from url.  They will
 # be placed in resources/{species_dir}/genomes/name_of_genome/name_of_genome.fna
 # where name_of_genome is like Otsh_v1.0
@@ -37,13 +45,20 @@ genomes:
 # The "variants" field is reserved only for the canonical SNP-sets that we would
 # use to call specific variants.  Not for finding new variants, etc.
 marker_sets:
-  MYK_CRTFC_67:
+  MYK_RODZEN:
     genome:
       Omyk_1.0:
-        regions: config/Chinook/regions/LFAR-Otsh_v1.0.txt
+        regions: config/Mykiss/regions/MYK_RODZEN-Omyk_1.0.txt
         microhap_variants:
-          all_variants: config/Chinook/canonical_variation/LFAR-all-snps-round-1.vcf
-          after_5_runs: config/Chinook/canonical_variation/LFAR-8-amplicons-22-variants.vcf
+          dummy_snps: config/Mykiss/canonical_variation/dummy.vcf
+    target_fasta:
+      myk_rodzen_tf:
+        fasta: config/Mykiss/target_fastas/rodzen_mykiss_GTseq.fasta
+        microhap_variants:
+          dummy_snps: config/Mykiss/canonical_variation/dummy.vcf
+
+
+
  
 
 

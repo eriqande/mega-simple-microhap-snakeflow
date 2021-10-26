@@ -8,6 +8,17 @@ run_dir: .test/data  # set it on the command line to the directory in which raw,
 samples: samples.csv
 units: units.csv
 
+
+# by default, we don't use trimmomatic.  But you can give
+# --config use_trimmomatic=true to use it with the parameters
+# as specificied below.
+use_trimmomatic: false
+
+# here are some parameters and things for trimmomatic trimming,
+# for the way that Jeff Rodzen does it.
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
+
 # set genomes up to be downloaded from url.  They will
 # be placed in resources/{species_dir}/genomes/name_of_genome/name_of_genome.fna
 # where name_of_genome is like Otsh_v1.0

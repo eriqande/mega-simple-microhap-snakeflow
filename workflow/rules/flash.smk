@@ -6,8 +6,8 @@
 # as paired reads.
 rule flash_paired_ends:
   input:
-    fq1=fq1_from_sample_and_run,
-    fq2=fq2_from_sample_and_run
+    fq1=fq1_or_trim1_from_sample_and_run,
+    fq2=fq2_or_trim2_from_sample_and_run
   output:
     EF="{run_dir}/{species_dir}/flash/{sample}.extendedFrags.fastq.gz",
   log:

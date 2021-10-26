@@ -57,6 +57,40 @@ def region_files_from_marker_set_and_genome(wildcards):
     """Get path to the regions file given the genome and marker set"""
     return config["marker_sets"][wildcards.marker_set]["genome"][wildcards.genome]["regions"]
 
+def fq1_or_trim1_from_sample_and_run(wildcards):
+    """Get path to a sample's read1 fastq file"""
+    if not config["use_trimmomatic"]:
+        return r"{run_dir}/raw/{fq}".format(
+            run_dir=wildcards.run_dir,
+            fq=samples.loc[wildcards.sample, "fq1"]
+        )
+    else:
+        return r"{run_dir}/{species_dir}/trimmomatic/{sm}.1.fastq.gz".format(
+            run_dir=wildcards.run_dir,
+            species_dir=config["species"],
+            sm=wildcards.sample)
+
+def fq2_or_trim2_from_sample_and_run(wildcards):
+    """Get path to a sample's read1 fastq file"""
+    if not config["use_trimmomatic"]:
+        return r"{run_dir}/raw/{fq}".format(
+            run_dir=wildcards.run_dir,
+            fq=samples.loc[wildcards.sample, "fq2"]
+        )
+    else:
+        return r"{run_dir}/{species_dir}/trimmomatic/{sm}.2.fastq.gz".format(
+            run_dir=wildcards.run_dir,
+            species_dir=config["species"],
+            sm=wildcards.sample)
+
+
+def fq2_from_sample_and_run(wildcards):
+    """Get path to a sample's read1 fastq file"""
+    return r"{run_dir}/raw/{fq}".format(
+        run_dir=wildcards.run_dir,
+        fq=samples.loc[wildcards.sample, "fq2"]
+    )
+
 def fq1_from_sample_and_run(wildcards):
     """Get path to a sample's read1 fastq file"""
     return r"{run_dir}/raw/{fq}".format(
@@ -70,6 +104,7 @@ def fq2_from_sample_and_run(wildcards):
         run_dir=wildcards.run_dir,
         fq=samples.loc[wildcards.sample, "fq2"]
     )
+
 
 def rg_from_sample(wildcards):
     """get the read group to put in a sample's BAM file"""

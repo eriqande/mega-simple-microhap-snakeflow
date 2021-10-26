@@ -8,6 +8,14 @@ species: Coho
 samples: samples.csv
 units: units.csv
 
+use_trimmomatic: false
+
+
+# here are some parameters and things for trimmomatic trimming,
+# for the way that Jeff Rodzen does it.
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
+
 
 # here we give details about our marker sets.  Note that a marker
 # set can be both genome-focused and target_fasta-focused, as
