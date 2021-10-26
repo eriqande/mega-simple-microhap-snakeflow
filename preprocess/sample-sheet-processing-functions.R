@@ -4,17 +4,36 @@ library(tidyverse)
 #' in the same directory
 #' @param path  The path to the Sample_Sheet.csv file.  This is a file
 #' that comes out of the MiSeq.
-create_samples_and_units <- function(path) {
+#' @param NMFS_DNA_ID_from_Sample_ID  If this is FALSE (the default)
+#' then the NMFS_DNA_ID is found as the part of the Sample_Plate column
+#' before the first underscore.  (This is how our group tends to
+#' record things).  For other uses, the Sample_Plate might be the same
+#' for all individuals, and their unique identifiers will be stored
+#' in the Sample_ID column.  Setting this option to TRUE will use the
+#' Sample_ID as the NMFS_DNA_ID.
+create_samples_and_units <- function(
+  path,
+  NMFS_DNA_ID_from_Sample_ID = FALSE
+) {
 
   # first, find where to start reading the file
   lines <- read_lines(path, n_max = 100)
   skip <- min(which(str_detect(lines, "^\\[Data\\]")))
 
   # first make and retain only the columns we will need going forward
-  S <- read_csv(path, skip = skip) %>%
+  T1 <- read_csv(path, skip = skip) %>%
     filter(!is.na(Sample_ID)) %>%  # if there were empty lines included in the file, toss them this way
+
+  if(NMFS_DNA_ID_from_Sample_ID == TRUE) {
+    T2 <- T1 %>%
+      mutate(NMFS_DNA_ID = Sample_ID)
+  } else {
+    T2 <- T1 %>%
+      mutate(NMFS_DNA_ID = str_split_fixed(Sample_Plate, "_", n = 3)[,1])
+  }
+
+  S <- T2 %>%
     mutate(
-      NMFS_DNA_ID = str_split_fixed(Sample_Plate, "_", n = 3)[,1],
       sample = str_c("s", sprintf("%04d", 1:n()))
     ) %>%
     rename(
