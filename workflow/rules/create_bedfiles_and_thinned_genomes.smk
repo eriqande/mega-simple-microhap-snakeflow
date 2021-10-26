@@ -26,7 +26,8 @@ rule make_thinned_genomes:
     fa="resources/{species_dir}/genomes/{genome}/{genome}.fna"
   log:
     faidx="resources/{species_dir}/logs/make_thinned_genomes/faidx-{marker_set}-{genome}.log",
-    bwaidx="resources/{species_dir}/logs/make_thinned_genomes/bwa_index-{marker_set}-{genome}.log"
+    bwaidx="resources/{species_dir}/logs/make_thinned_genomes/bwa_index-{marker_set}-{genome}.log",
+    faidx_output="resources/{species_dir}/logs/make_thinned_genomes/faidx_output-{marker_set}-{genome}.log",
   envmodules:
     "aligners/bwa",
     "bio/samtools"
@@ -37,5 +38,6 @@ rule make_thinned_genomes:
     fa="resources/{species_dir}/thinned_genomes/{genome}/{marker_set}/thinned.fna"
   shell:
     "samtools faidx {input.fa} $(cat {input.regfile}) > {output.fa} 2> {log.faidx}; "
-    "bwa index {output.fa} 2> {log.bwaidx}"
+    "bwa index {output.fa} 2> {log.bwaidx}; "
+    "samtools faidx {output.fa} 2> {log.faidx_output}"
 
