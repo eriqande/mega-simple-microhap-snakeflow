@@ -22,7 +22,7 @@ create_samples_and_units <- function(
 
   # first make and retain only the columns we will need going forward
   T1 <- read_csv(path, skip = skip) %>%
-    filter(!is.na(Sample_ID)) %>%  # if there were empty lines included in the file, toss them this way
+    filter(!is.na(Sample_ID)) # if there were empty lines included in the file, toss them this way
 
   if(NMFS_DNA_ID_from_Sample_ID == TRUE) {
     T2 <- T1 %>%
