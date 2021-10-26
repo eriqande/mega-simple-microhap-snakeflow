@@ -1,0 +1,17 @@
+---
+title: "README_mykiss"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Eric has added some marker sets for Mykiss into the flow in order
+to get one of Jeff Rodzen's marker sets in as as example.  
+
+To run this, Eric took the `SampleSheet_FRH_Steelhead_GTseq_110720.csv`
+and added `MYK_RODZEN` to very sample row in the Description column, and
+renamed the result to SampleSheet.csv`.
+
+Then 
