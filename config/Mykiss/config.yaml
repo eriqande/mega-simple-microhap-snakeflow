@@ -50,12 +50,12 @@ marker_sets:
       Omyk_1.0:
         regions: config/Mykiss/regions/MYK_RODZEN-Omyk_1.0.txt
         microhap_variants:
-          dummy_snps: config/Mykiss/canonical_variation/dummy.vcf
+          starter_variation: config/Mykiss/canonical_variation/myk-rodzen-fullgex-484-sites-from-0045_FRH.vcf
     target_fasta:
       myk_rodzen_tf:
         fasta: config/Mykiss/target_fastas/rodzen_mykiss_GTseq.fasta
         microhap_variants:
-          dummy_snps: config/Mykiss/canonical_variation/dummy.vcf
+          starter_variation: config/Mykiss/canonical_variation/myk-rodzen-target-fasta-545-sites-from-0045_FRH.vcf
 
 
 
