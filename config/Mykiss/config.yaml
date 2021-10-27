@@ -45,14 +45,14 @@ genomes:
 # The "variants" field is reserved only for the canonical SNP-sets that we would
 # use to call specific variants.  Not for finding new variants, etc.
 marker_sets:
-  MYK_RODZEN:
+  OMY_RODZEN:
     genome:
       Omyk_1.0:
-        regions: config/Mykiss/regions/MYK_RODZEN-Omyk_1.0.txt
+        regions: config/Mykiss/regions/OMY_RODZEN-Omyk_1.0.txt
         microhap_variants:
           starter_variation: config/Mykiss/canonical_variation/myk-rodzen-fullgex-484-sites-from-0045_FRH.vcf
     target_fasta:
-      myk_rodzen_tf:
+      omy_rodzen_tf:
         fasta: config/Mykiss/target_fastas/rodzen_mykiss_GTseq.fasta
         microhap_variants:
           starter_variation: config/Mykiss/canonical_variation/myk-rodzen-target-fasta-545-sites-from-0045_FRH.vcf
