@@ -180,6 +180,50 @@ def bam_tree_equivalent_files_from_marker_sets(wildcards, type, trunk, ext):
                 raise ValueError("type must be fullg or target_fasta or fullgex_remapped")
 
 
+# This is a version of this that is responsive to the mapping mode
+# (fullg, target_fasta, etc. in the wildcard map_mode). I use it for the
+# cigar strings.
+def bam_tree_equivalent_files2(wildcards, trunk, ext):
+    if(wildcards.map_mode == "fullg-extracted" or wildcards.map_mode == "fullgex_remapped_to_thinned" or wildcards.map_mode == "fullg"):
+        # first, get the pandas data frame of samples for the particular marker set
+        DF = gf_units[gf_units["Markers"].isin([wildcards.marker_set])]
+        # then cycle over those rows and make a list of paths
+        ret = list()
+        for index, row in DF.iterrows():
+            S = row['sample']
+            ret = ret + [r"{R}/{species_dir}/{TRUNK}/{MM}/{M}/{GT}/{S}{EXT}".format(
+            R = wildcards.run_dir,
+            species_dir = wildcards.species_dir,
+            TRUNK = trunk,
+            MM = wildcards.map_mode,
+            M = wildcards.marker_set,
+            GT = wildcards.genome_or_tf,
+            S = S,
+            EXT = ext)]
+        return ret
+    else:
+        if(wildcards.map_mode == "target_fastas"):
+            # first, get the pandas data frame of samples for the particular marker set
+            DF = tf_units[tf_units["Markers"].isin([wildcards.marker_set])]
+            # then cycle over those rows and make a list of paths
+            ret = list()
+            for index, row in DF.iterrows():
+                S = row['sample']
+                ret = ret + [r"{R}/{species_dir}/{TRUNK}/{MM}/{M}/{GT}/{S}{EXT}".format(
+                R = wildcards.run_dir,
+                species_dir = wildcards.species_dir,
+                TRUNK = trunk,
+                MM = wildcards.map_mode,
+                M = wildcards.marker_set,
+                GT = wildcards.genome_or_tf,
+                S = S,
+                EXT = ext)]
+            return ret
+        else:
+            raise ValueError("wildcard \"map_mode\" must be fullg, fullg-extracted, fullgex_remapped_to_thinned, or target_fastas")
+
+
+
 
 # get the canonical variants VCF for microhaplot for fullgex_remapped
 def fullgex_remapped_mh_vcf_from_marker_set_genome_microhap_vcf(wildcards):

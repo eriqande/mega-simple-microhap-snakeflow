@@ -10,6 +10,7 @@ rule all:
 		requested_outputs_from_units_and_config("idxstats", "read-counts-heatmap.pdf"),
 		requested_outputs_from_units_and_config("idxstats", "read-counts-samples.pdf"),
 		requested_outputs_from_units_and_config("idxstats", "read-counts-markers.pdf"),
+		requested_outputs_from_units_and_config("cigars", "cigar_counts.tsv"),
 		requested_vcfs_from_units_and_config(),
 		requested_microhap_outputs_from_units_and_config()
 
@@ -25,6 +26,7 @@ include: "rules/variant_calling.smk"
 include: "rules/microhaplot.smk"
 include: "rules/multi_dir_variant_calling.smk"
 include: "rules/idxstats.smk"
+include: "rules/cigars.smk"
 
 
 

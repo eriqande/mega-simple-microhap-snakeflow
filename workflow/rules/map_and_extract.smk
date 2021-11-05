@@ -48,12 +48,14 @@ rule extract_reads_from_full_genomes:
     bam="{run_dir}/{species_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam",
     bai="{run_dir}/{species_dir}/bams/fullg-extracted/{marker_set}/{genome}/{sample}.bam.bai",
     idx=temp("{run_dir}/{species_dir}/idxstats/fullg-extracted/{marker_set}/{genome}/{sample}_idxstats.txt"),
+    sam="{run_dir}/{species_dir}/sams/fullg-extracted/{marker_set}/{genome}/{sample}.sam"
   shell:
     " samtools view -u {input.bam} $(cat {input.regfile})  2> {log} |  "
     " samtools sort -T {wildcards.run_dir}/{wildcards.species_dir}/bams/fullg-extracted/{wildcards.marker_set}/{wildcards.genome}/{wildcards.sample} "
     "   -O bam -o {output.bam} -  2>> {log}; "
     " samtools index {output.bam}; "
     " samtools idxstats {output.bam} > {output.idx} 2>> {log}; "
+    " samtools view {output.bam} > {output.sam} 2>> {log}; "
 
 
 
