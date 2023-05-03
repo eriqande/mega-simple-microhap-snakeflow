@@ -47,6 +47,8 @@ genomes:
 
 # The "variants" field is reserved only for the canonical SNP-sets that we would
 # use to call specific variants.  Not for finding new variants, etc.
+
+#This is for the panel that Diana created, which we sequenced 3 plates with
 marker_sets:
   DIANA:
     target_fasta:
