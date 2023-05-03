@@ -53,9 +53,9 @@ marker_sets:
   DIANA:
     target_fasta:
       diana:
-        fasta: config/NWC-Rockfish/target_fastas/diana_rockfish.fasta
+        fasta: config/NWC-Rockfish/target_fastas/gtseq18_loci.fasta
         microhap_variants:
-          all_snps_from_diana: config/NWC-Rockfish/canonical_variation/from_diana.vcf
+          all_snps_from_diana: config/NWC-Rockfish/canonical_variation/sebastes_sppID_combined_filtered.recode.vcf
 
 
 
