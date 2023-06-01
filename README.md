@@ -1,17 +1,23 @@
 mega-simple-microhap-snakeflow
 ================
 
--   [Quick Start](#quick-start)
--   [Rulegraph](#rulegraph)
--   [Inputs](#inputs)
-    -   [`SampleSheet.csv`](#samplesheetcsv)
-    -   [samples.csv and units.csv](#samplescsv-and-unitscsv)
--   [Production runs](#production-runs)
--   [Multi-run variant calling](#multi-run-variant-calling)
-    -   [Making a VCF for microhaplot after multi-run variant
-        calling](#making-a-vcf-for-microhaplot-after-multi-run-variant-calling)
-    -   [A word on getting those files off a remote
-        server](#a-word-on-getting-those-files-off-a-remote-server)
+- <a href="#quick-start" id="toc-quick-start">Quick Start</a>
+- <a href="#single-end-data" id="toc-single-end-data">Single-end data</a>
+- <a href="#rulegraph" id="toc-rulegraph">Rulegraph</a>
+- <a href="#inputs" id="toc-inputs">Inputs</a>
+  - <a href="#samplesheetcsv"
+    id="toc-samplesheetcsv"><code>SampleSheet.csv</code></a>
+  - <a href="#samplescsv-and-unitscsv"
+    id="toc-samplescsv-and-unitscsv">samples.csv and units.csv</a>
+- <a href="#production-runs" id="toc-production-runs">Production runs</a>
+- <a href="#multi-run-variant-calling"
+  id="toc-multi-run-variant-calling">Multi-run variant calling</a>
+  - <a href="#making-a-vcf-for-microhaplot-after-multi-run-variant-calling"
+    id="toc-making-a-vcf-for-microhaplot-after-multi-run-variant-calling">Making
+    a VCF for microhaplot after multi-run variant calling</a>
+  - <a href="#a-word-on-getting-those-files-off-a-remote-server"
+    id="toc-a-word-on-getting-those-files-off-a-remote-server">A word on
+    getting those files off a remote server</a>
 
 This repository holds the Snakemake-based workflow for implementing the
 **M**olecular **E**cology and **G**enetic **A**nalysis Team’s **Simple**
@@ -92,8 +98,16 @@ data set on your own laptop or cluster, here are the steps:
     The test data set is small enough that a single core is enough.
     However, the first time you run it, you can expect to spend quite a
     bit of time (30 minute to a couple hours, depending on the speed of
-    your computer) downloading the Otsh\_v1.0 genome and indexing it
-    with bwa.
+    your computer) downloading the Otsh_v1.0 genome and indexing it with
+    bwa.
+
+## Single-end data
+
+This workflow was originally developed for paired end data. If you have
+single end data, you can just set the `fq1` and `fq2` values in each row
+in `samples.csv` to be the path to the single end file. **Note: you must
+use `use_trimmomatic: false` in the config if you are using single-end
+data (for now).**
 
 ## Rulegraph
 
@@ -184,32 +198,31 @@ conventions and things. Just go ahead and look at the functions to
 understand what is going on there. For our purposes at the SWFSC, we
 have these conventions:
 
--   Our NMFS\_DNA\_ID is the part before the first underscore in the
-    `Sample_Plate` column. If your protocol has the sample ID in the
-    Sample\_ID column, then that is accommodated as described below.
+- Our NMFS_DNA_ID is the part before the first underscore in the
+  `Sample_Plate` column. If your protocol has the sample ID in the
+  Sample_ID column, then that is accommodated as described below.
 
--   The marker sets to process each individual (row) at is given as a
-    comma-separated (white space around the commas is stripped) series
-    of marker-set names in the `Description` column.
+- The marker sets to process each individual (row) at is given as a
+  comma-separated (white space around the commas is stripped) series of
+  marker-set names in the `Description` column.
 
--   The `Sample_Name` column *must* give the identifier of the
-    individual that forms the beginning of the name of its fastq files
-    in raw. In particular, if YYYYYYY is the entry for the individual in
-    the `Sample_Name` column, then its paired-end fastq files stored in
-    the `raw` directory *must* match the regular expressions:
+- The `Sample_Name` column *must* give the identifier of the individual
+  that forms the beginning of the name of its fastq files in raw. In
+  particular, if YYYYYYY is the entry for the individual in the
+  `Sample_Name` column, then its paired-end fastq files stored in the
+  `raw` directory *must* match the regular expressions:
 
-    ``` sh
-    YYYYYYY_.*_L00[0-9]_R1_00[0-9].fastq.gz
+  ``` sh
+  YYYYYYY_.*_L00[0-9]_R1_00[0-9].fastq.gz
 
-    and 
+  and 
 
-    YYYYYYY_.*_L00[0-9]_R2_00[0-9].fastq.gz
-    ```
+  YYYYYYY_.*_L00[0-9]_R2_00[0-9].fastq.gz
+  ```
 
-    Entries in the `Sample_Name` *must not* have any underscores in
-    them. The letters before the first underscore in the fastq file name
-    is used to match each entry in the `Sample_Name` column to its fastq
-    files.
+  Entries in the `Sample_Name` *must not* have any underscores in them.
+  The letters before the first underscore in the fastq file name is used
+  to match each entry in the `Sample_Name` column to its fastq files.
 
 ### samples.csv and units.csv
 
@@ -235,8 +248,8 @@ create_samples_and_units("mypath/mydir/SampleSheet.csv")
 and that will create `samples.csv` and `units.csv` in the directory
 `mypath/mydir` alongside `SampleSheet.csv`.
 
-If you have your sample ID in the Sample\_ID column, then you can do
-like this:
+If you have your sample ID in the Sample_ID column, then you can do like
+this:
 
 ``` r
 source("preprocess/sample-sheet-processing-functions.R")
@@ -277,7 +290,7 @@ produced. It does not parse the sample sheets of each run to figure out
 which individuals should have BAMs and request those.
 
 This is only imlemented for the fullgex-remapped-to-thinned stuff, at
-the moment, but I will get it going for the target\_fastas soon, too.
+the moment, but I will get it going for the target_fastas soon, too.
 
 Here is how to do it:
 

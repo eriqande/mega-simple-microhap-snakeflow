@@ -78,6 +78,13 @@ a bit of time (30 minute to a couple hours, depending on the speed of
 your computer) downloading the Otsh_v1.0 genome and indexing it with
 bwa.
 
+## Single-end data
+
+This workflow was originally developed for paired end data.  If you have single end
+data, you can just set the `fq1` and `fq2` values in each row in `samples.csv` to
+be the path to the single end file.  **Note: you must use `use_trimmomatic: false` 
+in the config if you are using single-end data (for now).**
+
 ## Rulegraph
 
 No snakemake workflow description is complete without a quick DAG showing

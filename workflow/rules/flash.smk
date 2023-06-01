@@ -16,7 +16,11 @@ rule flash_paired_ends:
   conda:
     "../envs/flash.yaml"
   shell:
-    "flash -m 4 -M 100 -z -O  "
-    " --output-prefix={wildcards.run_dir}/{wildcards.species_dir}/flash/{wildcards.sample} "
-    " {input.fq1} {input.fq2} > {log.stdout}  2> {log.stderr} "
+    " if [ {input.fq1} = {input.fq2} ]; then  "
+    "    cp {input.fq1} {output.EF}; "
+    " else          "  
+    "   flash -m 4 -M 100 -z -O  "
+    "     --output-prefix={wildcards.run_dir}/{wildcards.species_dir}/flash/{wildcards.sample} "
+    "     {input.fq1} {input.fq2} > {log.stdout}  2> {log.stderr}; "
+    " fi "
 

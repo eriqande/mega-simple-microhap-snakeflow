@@ -52,10 +52,10 @@ genomes:
 marker_sets:
   DIANA:
     target_fasta:
-      diana:
-        fasta: config/NWC-Rockfish/target_fastas/gtseq18_loci.fasta
+      test_54:
+        fasta: config/NWC-Rockfish/target_fastas/test_54.fasta
         microhap_variants:
-          all_snps_from_diana: config/NWC-Rockfish/canonical_variation/sebastes_sppID_combined_filtered.recode.vcf
+          snps4test: config/NWC-Rockfish/canonical_variation/test_54.vcf
 
 
 

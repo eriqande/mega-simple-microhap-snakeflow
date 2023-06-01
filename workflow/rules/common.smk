@@ -84,13 +84,6 @@ def fq2_or_trim2_from_sample_and_run(wildcards):
             sm=wildcards.sample)
 
 
-def fq2_from_sample_and_run(wildcards):
-    """Get path to a sample's read1 fastq file"""
-    return r"{run_dir}/raw/{fq}".format(
-        run_dir=wildcards.run_dir,
-        fq=samples.loc[wildcards.sample, "fq2"]
-    )
-
 def fq1_from_sample_and_run(wildcards):
     """Get path to a sample's read1 fastq file"""
     return r"{run_dir}/raw/{fq}".format(
@@ -99,7 +92,7 @@ def fq1_from_sample_and_run(wildcards):
     )
 
 def fq2_from_sample_and_run(wildcards):
-    """Get path to a sample's read1 fastq file"""
+    """Get path to a sample's read2 fastq file"""
     return r"{run_dir}/raw/{fq}".format(
         run_dir=wildcards.run_dir,
         fq=samples.loc[wildcards.sample, "fq2"]
