@@ -13,7 +13,7 @@ use_trimmomatic: False
 
 # here are some parameters and things for trimmomatic trimming,
 # for the way that Jeff Rodzen does it.
-trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15
 trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
 
 # set genomes up to be downloaded from url.  They will
@@ -58,8 +58,19 @@ marker_sets:
           starter_variation: config/Mykiss/canonical_variation/omy-rodzen-target-fasta-545-sites-from-0045_FRH.vcf
 
 
+  OMY_ADAPT:
+    genome:
+      Omyk_1.0:
+        regions: config/Mykiss/regions/OMY_adapt-Omyk_1.0.txt
+        genome_target_variants:
+          target_variation: config/Mykiss/canonical_variation/mykiss_adaptGTseq_OldGenome_targetsOnly.vcf
+    target_fasta:
+      omy_adapt_tf:
+        fasta: config/Mykiss/target_fastas/mykissAdaptLocs_21June2023.fa
+        amplicon_target_variants:
+          target_variation: config/Mykiss/canonical_variation/mykiss_adaptGTseq_amplicons_targetsOnly.vcf
 
- 
+
 
 
 
