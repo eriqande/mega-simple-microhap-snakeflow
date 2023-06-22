@@ -62,13 +62,13 @@ marker_sets:
     genome:
       Omyk_1.0:
         regions: config/Mykiss/regions/OMY_adapt-Omyk_1.0.txt
-        genome_target_variants:
-          target_variation: config/Mykiss/canonical_variation/mykiss_adaptGTseq_OldGenome_targetsOnly.vcf
+        microhap_variants:
+          all_variants: config/Mykiss/canonical_variation/mykiss_adaptGTseq_OldGenome_targetsOnly.vcf
     target_fasta:
       omy_adapt_tf:
         fasta: config/Mykiss/target_fastas/mykissAdaptLocs_21June2023.fa
-        amplicon_target_variants:
-          target_variation: config/Mykiss/canonical_variation/mykiss_adaptGTseq_amplicons_targetsOnly.vcf
+        microhap_variants:
+          all_variants: config/Mykiss/canonical_variation/mykiss_adaptGTseq_amplicons_targetsOnly.vcf
 
 
 
