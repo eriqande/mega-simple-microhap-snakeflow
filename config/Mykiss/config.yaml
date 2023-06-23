@@ -63,7 +63,7 @@ marker_sets:
       Omyk_1.0:
         regions: config/Mykiss/regions/OMY_adapt-Omyk_1.0.txt
         microhap_variants:
-          all_variants: config/Mykiss/canonical_variation/mykiss_adaptGTseq_OldGenome_targetsOnly.vcf
+          all_variants: config/Mykiss/canonical_variation/mykiss_adaptGTseq_genomeThinned_targetsOnly.vcf
     target_fasta:
       omy_adapt_tf:
         fasta: config/Mykiss/target_fastas/mykissAdaptLocs_21June2023.fa
