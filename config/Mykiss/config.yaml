@@ -71,6 +71,12 @@ marker_sets:
           all_variants: config/Mykiss/canonical_variation/mykiss_adaptGTseq_amplicons_targetsOnly.vcf
 
 
+  MYKROHAPS:
+    target_fasta:
+      mykrohaps_tf:
+        fasta: config/Mykiss/target_fastas/mykiss_final124reference_trimmed_noNs.fasta
+        microhap_variants:
+          all_variants: config/Mykiss/canonical_variation/SHmerged1-16_with_CDFW_trout_final_no_multiallelic.vcf
 
 
 
