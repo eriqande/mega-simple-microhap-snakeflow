@@ -13,7 +13,7 @@ use_trimmomatic: false
 
 # here are some parameters and things for trimmomatic trimming,
 # for the way that Jeff Rodzen does it.
-trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15
 trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
 
 
@@ -41,7 +41,7 @@ marker_sets:
   COHO:
     target_fasta:
       coho163:
-        fasta: config/Coho/target_fastas/CohoRef_SNPsAndMHaps_163.fasta
+        fasta: config/Coho/target_fastas/CohoRef_SNPsAndMHaps_163WithGHPsi.fasta
         microhap_variants:
           single_snps: config/Coho/canonical_variation/Coho_JustTargetSNPs_77.recode.vcf
           all_variants: config/Coho/canonical_variation/CohoRefVCF_May2021_sorted.vcf
