@@ -16,7 +16,7 @@ use_trimmomatic: false
 
 # here are some parameters and things for trimmomatic trimming,
 # for the way that Jeff Rodzen does it.
-trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15 
+trimmo_adapter_opt: ILLUMINACLIP:config/Mykiss/adapters/GTseq-PE.fa:2:40:15
 trimmo_opts: "LEADING:2 TRAILING:2 SLIDINGWINDOW:4:2 MINLEN:40"
 
 # set genomes up to be downloaded from url.  They will
@@ -86,6 +86,13 @@ marker_sets:
         fasta: config/Chinook/target_fastas/chinook_84amps.fasta
         microhap_variants:
           single_snps: config/Chinook/canonical_variation/chinook_84amps_single_targets.vcf
+
+  FullPanel:
+    target_fasta:
+      FullPanel:
+        fasta: config/Chinook/target_fastas/chinook_FullPanel_Jan2024.fasta
+        microhap_variants:
+          all_variants: config/Chinook/canonical_variation/chinook_FullPanel_TargetFasta_Jan2024.vcf
 
 
 
