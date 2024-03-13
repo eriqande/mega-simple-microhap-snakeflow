@@ -91,12 +91,12 @@ marker_sets:
       Otsh_v1.0:
         regions: config/Chinook/regions/Chinook_FullPanel_VGLL3Six6LFARWRAP-Otsh_v1.0.txt
         microhap_variants:
-          all_variants: config/Chinook/canonical_variation/Chinook_FullPanel_VGLL3Six6LFARWRAP-Otsh_v1.0.vcf
+          lfar_wrap_vgll3six6: config/Chinook/canonical_variation/Chinook_FullPanel_VGLL3Six6LFARWRAP-Otsh_v1.0.vcf
     target_fasta:
       target_fasta:
         fasta: config/Chinook/target_fastas/chinook_FullPanel_RosaTransition_March2024.fasta
         microhap_variants:
-          all_variants: config/Chinook/canonical_variation/chinook_FullPanel_ROSATransition_March2024.vcf
+          rosa_microhap_snplicon: config/Chinook/canonical_variation/chinook_FullPanel_ROSATransition_March2024.vcf
 
 
 
